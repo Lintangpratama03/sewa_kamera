@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_transaksi extends CI_Controller
+class manage_history_transaksi extends CI_Controller
 {
-    var $module_js = ['manage-transaksi'];
+    var $module_js = ['manage-history-transaksi'];
     var $app_data = [];
 
     public function __construct()
@@ -71,7 +71,7 @@ class manage_transaksi extends CI_Controller
         $this->app_data['title'] = 'Kelola transaksi';
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
-        $this->load->view('front_page/manage_transaksi');
+        $this->load->view('front_page/manage_history_transaksi');
         $this->load->view('template-mitra/footer');
         $this->load->view('template-mitra/end');
         $this->load->view('js-custom', $this->app_data);
@@ -81,14 +81,14 @@ class manage_transaksi extends CI_Controller
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
         $query = [
-            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, c.name',
+            'select' => 'DATE(a.tgl_booking) as tgl_booking_date,DATE(a.tgl_tenggat) as tgl_tenggat_date, a.*, c.name',
             'from' => 'transaksi a',
             'join' => [
                 'st_user c, c.id = a.id_user',
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'a.status !=' => 4,
+                'a.status' => 4,
                 'a.id_mitra' => $data['user']['id'],
             ]
         ];

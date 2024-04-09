@@ -28,13 +28,6 @@ function filterData() {
     table.columns(1).search(dateFilter ? dateFilter : "").draw();
 }
 
-// $("#cekPesan").on("show.bs.modal", function (e) {
-//     var button = $(e.relatedTarget);
-//     var id = button.data("id");
-//     var modalButton = $(this).find("#btn-success");
-//     modalButton.attr("onclick", "cek_ulasan(" + id + ")");
-// });
-
 function previewImage(event) {
     const imageInput = event.target;
     const imagePreview = document.getElementById("imagePreview");
@@ -52,6 +45,8 @@ function previewImage(event) {
         imagePreview.innerHTML = "";
     }
 }
+
+
 function previewImage1(event) {
     const imageInput1 = event.target;
     const imagePreview1 = document.getElementById("imagePreview1");
@@ -69,6 +64,7 @@ function previewImage1(event) {
         imagePreview1.innerHTML = "";
     }
 }
+
 function delete_form() {
     $("[name='id']").val("");
     $("[name='name']").val("");
@@ -99,45 +95,25 @@ function get_data() {
                         },
                     },
                     { data: "tgl_booking_date" },
+                    { data: "tgl_tenggat_date" },
                     { data: "name" },
                     { data: "keterangan" },
                     {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "1") {
-                                return '<button type="button" class="btn btn-block btn-danger">Belum dicek</button>';
-                            } else if (data == "2") {
-                                return '<button type="button" class="btn btn-block btn-warning">Proses Bayar</button>';
-                            } else if (data == "3") {
-                                return '<button type="button" class="btn btn-block btn-success">Sudah Bayar</button>';
-                            }
+                            return '<button type="button" class="btn btn-block btn-success">BERHASIL DISEWA</button>';
                         },
                     },
                     {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "1") {
+                            if (data == "4") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
-                                );
-                            } else if (data == "2") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>'
-                                );
-                            } else if (data == "3") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>' +
-                                    ' <button class="btn btn-success" data-toggle="modal" data-target="#detailBayar" title="balas" onclick="submit(' +
-									row.id +
-									')"><i class="fa-solid fa-shopping-cart"></i></button>'
                                 );
                             }
                         },
@@ -166,7 +142,8 @@ function submit(x) {
             $("[name='id']").val(hasil[0].id);
             $("[name='nama']").val(hasil[0].name);
             var nama = hasil[0].image;
-            imagePreview.innerHTML = `<br><a href="${base_url}assets/image/user/${nama}" data-fancybox="gallery"><img src="${base_url}assets/image/user/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;"></a>`;
+            // console.log(nama);
+            imagePreview1.innerHTML = `<br><a href="${base_url}assets/image/user/${nama}" data-fancybox="gallery"><img src="${base_url}assets/image/user/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;"></a>`;
 
             if (!$.fn.DataTable.isDataTable('#detailTable')) {
                 detailTable = $('#detailTable').DataTable({

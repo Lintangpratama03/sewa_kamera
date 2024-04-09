@@ -78,4 +78,7 @@ $route['manage-kategori'] = 'Manage_category';
 $route['manage-ulasan'] = 'Manage_ulasan';
 
 $route['manage-transaksi'] = 'Manage_transaksi';
-$route['manage-history'] = 'Manage_history';
+$route['manage-history'] = 'Manage_history_transaksi';
+
+$route['manage-kembali'] = 'Manage_kembali';
+$route['history-kembali'] = 'Manage_history_kembali';

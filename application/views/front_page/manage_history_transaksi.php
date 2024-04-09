@@ -19,18 +19,6 @@
             <h5 class="card-header">Kelola Transaksi</h5>
             <div class="card-body">
                 <div class="row mb-3">
-                    <div class="col-lg-3">
-                        <div class="form-group">
-                            <label for="status">Filter Status</label>
-                            <select class="form-control status" id="status">
-                                <option value="">Semua Status</option>
-                                <option>Belum dicek</option>
-                                <option>Proses Bayar</option>
-                                <option>Sudah Bayar</option>
-                                <option>Sudah Diambil</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="col-lg-4">
                         <div class="form-group">
                             <label for="tanggal">Filter Tanggal Booking</label>
@@ -56,6 +44,7 @@
                         <tr>
                             <th width="5%">No</th>
                             <th width="10%">Tgl Booking</th>
+                            <th width="10%">Tenggat Kembali</th>
                             <th width="10%">Nama Pelanggan</th>
                             <th width="10%">Keterangan</th>
                             <th width="10%">Status</th>
@@ -106,14 +95,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="modal-footer d-flex justify-content-start">
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-tolak" onclick="tolak_data()" class="btn btn-outline-danger btn-block">Tolak</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-ubah" onclick="terima_data()" class="btn btn-outline-success btn-block">Konfirmasi</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -154,14 +135,6 @@
                             <tbody>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-start">
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-tolak" onclick="tolak_data()" class="btn btn-outline-danger btn-block">Tolak</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-ubah" onclick="terima_data()" class="btn btn-outline-success btn-block">Konfirmasi</button>
-                        </div>
                     </div>
                 </div>
             </div>

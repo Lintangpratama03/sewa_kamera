@@ -81,16 +81,14 @@ class manage_transaksi extends CI_Controller
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
         $query = [
-            'select' => 'a.*,b.nama_produk, c.name',
+            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, c.name',
             'from' => 'transaksi a',
             'join' => [
-                'product b, b.id = a.id_produk',
-                'st_user c, c.id = a.id_user'
+                'st_user c, c.id = a.id_user',
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'b.id_mitra' => $data['user']['id'],
-
+                'a.id_mitra' => $data['user']['id'],
             ]
         ];
         $result = $this->data->get($query)->result();
@@ -101,13 +99,82 @@ class manage_transaksi extends CI_Controller
     {
         $id = $this->input->post('id');
         $query = [
-            'select' => 'a.*',
+            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk',
             'from' => 'transaksi a',
+            'join' => [
+                'st_user c, c.id = a.id_user',
+                'detail_transaksi d, d.id_transaksi = a.id',
+                'product b, b.id = d.id_produk',
+
+            ],
             'where' => [
+                'a.is_deleted' => 0,
                 'a.id' => $id,
             ]
         ];
         $result = $this->data->get($query)->result();
         echo json_encode($result);
+    }
+
+    public function terima_data()
+    {
+        $where = array('email' => $this->session->userdata('email'));
+        $data['user'] = $this->data->find('st_user', $where)->row_array();
+        $id = $this->input->post('id');
+        $timestamp = $this->db->query("SELECT NOW() as timestamp")->row()->timestamp;
+
+        $data = array(
+            'status' => '2',
+            'tgl_jadi' => $timestamp,
+        );
+        $where = array('id' => $id);
+
+        $updated = $this->data->update('transaksi', $where, $data);
+        if ($updated) {
+            $response['success'] = "<script>$(document).ready(function () {
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                  });
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Anda telah melakukan aksi edit data Data berhasil diedit'
+                  })
+              });</script>";
+        }
+        echo json_encode($response);
+    }
+    public function tolak_data()
+    {
+        $where = array('email' => $this->session->userdata('email'));
+        $data['user'] = $this->data->find('st_user', $where)->row_array();
+        $id = $this->input->post('id');
+        $timestamp = $this->db->query("SELECT NOW() as timestamp")->row()->timestamp;
+
+        $data = array(
+            'is_deleted' => '1',
+        );
+        $where = array('id' => $id);
+
+        $updated = $this->data->update('transaksi', $where, $data);
+        if ($updated) {
+            $response['success'] = "<script>$(document).ready(function () {
+                var Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                  });
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Anda telah melakukan aksi edit data Data berhasil diedit'
+                  })
+              });</script>";
+        }
+        echo json_encode($response);
     }
 }

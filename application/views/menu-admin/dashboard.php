@@ -82,29 +82,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="row">
-                <div class="col-lg-12">
-                    <div class="card">
-                        <h5 class="card-header">Kelola Admin</h5>
-                        <div class="card-body">
-                            <table id="example" class="table table-hover table-bordered" style="width:100%">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th width="5%">No</th>
-                                        <th width="15%">Nama</th>
-                                        <th width="15%">No HP</th>
-                                        <th width="25%">Alamat</th>
-                                        <th width="10%">Foto</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </section>
 </div>

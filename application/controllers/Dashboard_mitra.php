@@ -71,6 +71,14 @@ class Dashboard_mitra extends CI_Controller
 		$this->app_data['user'] = $this->data->get($user)->row_array();
 		$this->app_data['title'] = 'Dashboard';
 
+		$where = array('email' => $this->session->userdata('email'));
+		$data['user'] = $this->data->find('st_user', $where)->row_array();
+		$id = $data['user']['id'];
+		$this->app_data['produk_ready'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
+		$this->app_data['produk_pinjam'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
+		$this->app_data['total_produk'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
+		$this->app_data['jumlah_kategori'] = $this->data->count_wheree('product_has_category', 'is_deleted', '0', 'id_mitra', $id);
+
 		$this->load->view('template-mitra/start', $this->app_data);
 		$this->load->view('template-mitra/header', $this->app_data);
 		$this->load->view('front_page/dashboard', $this->app_data);

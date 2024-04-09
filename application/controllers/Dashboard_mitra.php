@@ -95,4 +95,20 @@ class Dashboard_mitra extends CI_Controller
 		$result = $this->data->get($query)->result();
 		echo json_encode($result);
 	}
+	public function get_data_chart()
+	{
+		$query = [
+			'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.card_image, a.username, a.password, a.last_login, b.name as akses',
+			'from' => 'st_user a',
+			'join' => [
+				'app_credential b, b.id = a.id_credential'
+			],
+			'where' => [
+				'a.is_deleted' => '0',
+				'a.id_credential' => '1'
+			]
+		];
+		$result = $this->data->get($query)->result();
+		echo json_encode($result);
+	}
 }

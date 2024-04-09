@@ -4,7 +4,7 @@
             <div class="row mb-2">
                 <div class="col-sm-6">
                     <h1>Selamat Datang
-                        <?= $user['name']; ?> ||
+                        <?= $user['name']; ?> -
                         <?= $user['akses']; ?>
                     </h1>
                 </div>
@@ -22,7 +22,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
+                    <div class="small-box bg-danger">
                         <div class="inner">
                             <p>Pelanggan Belum Diverifikasi</p>
                             <h3>
@@ -31,9 +31,9 @@
 
                         </div>
                         <div class="icon">
-                            <i class="ion ion-email-unread"></i>
+                            <i class="ion ion-alert-circled"></i>
                         </div>
-                        <a href="<?= base_url('manage-validasi') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="<?= base_url('manage-pelanggan-daftar') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
@@ -46,9 +46,9 @@
 
                         </div>
                         <div class="icon">
-                            <i class="ion ion-alert-circled"></i>
+                            <i class="ion ion-checkmark-circled"></i>
                         </div>
-                        <a href="<?= base_url('manage-validasi') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="<?= base_url('manage-pelanggan-aktif') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
@@ -61,13 +61,13 @@
 
                         </div>
                         <div class="icon">
-                            <i class="ion ion-checkmark-circled"></i>
+                            <i class="ion ion-alert-circled"></i>
                         </div>
-                        <a href="<?= base_url('manage-validasi') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="<?= base_url('manage-mitra-daftar') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
+                    <div class="small-box bg-info">
                         <div class="inner">
                             <p>Mitra Aktif</p>
                             <h3>
@@ -76,13 +76,13 @@
 
                         </div>
                         <div class="icon">
-                            <i class="ion ion-email"></i>
+                            <i class="ion ion-checkmark-circled"></i>
                         </div>
-                        <a href="<?= base_url('manage-history') ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        <a href="<?= base_url('manage-mitra-aktif') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
                         <h5 class="card-header">Kelola Admin</h5>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </section>
 </div>

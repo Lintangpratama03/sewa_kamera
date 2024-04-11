@@ -148,10 +148,8 @@ function get_data() {
                         render: function (data, type, row) {
                             if (data == "4") {
                                 return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>'
-                                );
+                                    '<a href="/sewa_kamera/manage-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
+                                );                                
                             }
                         },
                     },

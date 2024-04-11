@@ -33,6 +33,12 @@
 
                     </tbody>
                 </table>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <a href="<?= base_url('manage-kembali') ?>" class="btn btn-secondary">Kembali</a>
+                        <button type="button" class="btn btn-success" id="confirmButton">Konfirmasi</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="detailPesan">

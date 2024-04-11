@@ -82,3 +82,5 @@ $route['manage-history'] = 'Manage_history_transaksi';
 
 $route['manage-kembali'] = 'Manage_kembali';
 $route['history-kembali'] = 'Manage_history_kembali';
+
+$route['manage-kembali/(:num)'] = 'Manage_kembali_detail/index/$1';

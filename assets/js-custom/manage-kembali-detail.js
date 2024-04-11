@@ -1,4 +1,3 @@
-get_data();
 
 $(".status").select2({
     theme: "bootstrap4",
@@ -76,10 +75,13 @@ function delete_error() {
     $("#error-reply").hide();
 }
 
-function get_data() {
+// console.log(_id);
+get_data(_id);
+
+function get_data($id) {
     delete_error();
     $.ajax({
-        url: base_url + _controller + "/get_data",
+        url: base_url + _controller + "/get_data/"+ $id,
         method: "GET",
         dataType: "json",
         success: function (data) {
@@ -94,47 +96,22 @@ function get_data() {
                             return meta.row + 1;
                         },
                     },
-                    { data: "tgl_booking_date" },
-                    { data: "tgl_tenggat_date" },
-                    { data: "name" },
+                    { data: "nama_produk" },
+                    { data: "jumlah" },
                     {
-                        data: null,
+                        data: "image_produk",
                         className: "text-center",
                         render: function (data, type, row) {
-                            var today = new Date();
-                            today.setHours(0, 0, 0, 0);  
-                            var tenggat = new Date(row.tgl_tenggat_date);
-                            tenggat.setHours(0, 0, 0, 0);
-                        
-                            var daysLate = 0;
-                            if (today > tenggat) {
-                                var timeDiff = today.getTime() - tenggat.getTime();
-                                daysLate = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                            }
-                            return daysLate + " hari";
+                            var imageUrl = base_url + "assets/image/produk/" + data;
+                            return (
+                                '<a href="' +
+                                imageUrl +
+                                '" data-fancybox="gallery"><img src="' +
+                                imageUrl +
+                                '" style="max-width: 100px; max-height: 400px;"></a>'
+                            );
                         },
-                    },                                   
-                    {
-                        data: null,
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            var today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            
-                            var tenggat = new Date(row.tgl_tenggat_date);
-                            tenggat.setHours(0, 0, 0, 0);
-                    
-                            var denda = 0;
-                            if (today > tenggat) {
-                                var timeDiff = today.getTime() - tenggat.getTime();
-                                var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                                denda = daysDiff * 10000;
-                                return "Rp. " + denda.toLocaleString();
-                            } else {
-                                return "Rp. 0";
-                            }
-                        },
-                    },                    
+                    },               
                     {
                         data: "status",
                         className: "text-center",
@@ -146,13 +123,11 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "4") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
-                            }
                         },
                     },
                 ],

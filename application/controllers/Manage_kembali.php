@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_history_transaksi extends CI_Controller
+class manage_kembali extends CI_Controller
 {
-    var $module_js = ['manage-history-transaksi'];
+    var $module_js = ['manage-kembali'];
     var $app_data = [];
 
     public function __construct()
@@ -71,7 +71,7 @@ class manage_history_transaksi extends CI_Controller
         $this->app_data['title'] = 'Kelola transaksi';
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
-        $this->load->view('front_page/manage_history_transaksi');
+        $this->load->view('front_page/manage_kembali');
         $this->load->view('template-mitra/footer');
         $this->load->view('template-mitra/end');
         $this->load->view('js-custom', $this->app_data);
@@ -88,7 +88,7 @@ class manage_history_transaksi extends CI_Controller
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'a.status >' => 3,
+                'a.status' => 4,
                 'a.id_mitra' => $data['user']['id'],
             ]
         ];

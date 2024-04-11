@@ -3,12 +3,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>History Penyewaan</h1>
+                    <h1>Kelola Pengembalian</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="<?= base_url('dashboard') ?>">Home</a></li>
-                        <li class="breadcrumb-item active">History</li>
+                        <li class="breadcrumb-item active">Kembali</li>
                     </ol>
                 </div>
             </div>
@@ -16,7 +16,7 @@
     </section>
     <section class="content">
         <div class="card">
-            <h5 class="card-header">Data History Sewa</h5>
+            <h5 class="card-header">Kelola Kembali</h5>
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-lg-4">
@@ -46,7 +46,8 @@
                             <th width="10%">Tgl Booking</th>
                             <th width="10%">Tenggat Kembali</th>
                             <th width="10%">Nama Pelanggan</th>
-                            <th width="10%">Keterangan</th>
+                            <th width="10%">Telat</th>
+                            <th width="10%">Denda</th>
                             <th width="10%">Status</th>
                             <th width="10%">Aksi</th>
                         </tr>

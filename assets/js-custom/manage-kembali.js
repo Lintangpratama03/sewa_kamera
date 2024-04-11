@@ -97,12 +97,49 @@ function get_data() {
                     { data: "tgl_booking_date" },
                     { data: "tgl_tenggat_date" },
                     { data: "name" },
-                    { data: "keterangan" },
+                    {
+                        data: null,
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            var today = new Date();
+                            today.setHours(0, 0, 0, 0);  
+                            var tenggat = new Date(row.tgl_tenggat_date);
+                            tenggat.setHours(0, 0, 0, 0);
+                        
+                            var daysLate = 0;
+                            if (today > tenggat) {
+                                var timeDiff = today.getTime() - tenggat.getTime();
+                                daysLate = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                            }
+                            return daysLate + " hari";
+                        },
+                    },                                   
+                    {
+                        data: null,
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            var today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            
+                            var tenggat = new Date(row.tgl_tenggat_date);
+                            tenggat.setHours(0, 0, 0, 0);
+                    
+                            var denda = 0;
+                            if (today > tenggat) {
+                                var timeDiff = today.getTime() - tenggat.getTime();
+                                var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                                denda = daysDiff * 10000;
+                                return "Rp. " + denda.toLocaleString();
+                            } else {
+                                return "Rp. 0";
+                            }
+                        },
+                    },                    
                     {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            return '<button type="button" class="btn btn-block btn-success">BERHASIL DISEWA</button>';
+                            return '<button type="button" class="btn btn-block btn-danger">Belum Kembali</button>';
                         },
                     },
                     {
@@ -113,7 +150,7 @@ function get_data() {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
-                                    ')"><i class="fa-solid fa-info-circle"></i></button>'
+                                    ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
                             }
                         },

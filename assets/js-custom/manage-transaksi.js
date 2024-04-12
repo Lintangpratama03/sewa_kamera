@@ -166,7 +166,7 @@ function submit(x) {
             $("[name='id']").val(hasil[0].id);
             $("[name='nama']").val(hasil[0].name);
             var nama = hasil[0].image;
-            imagePreview.innerHTML = `<br><a href="${base_url}assets/image/user/${nama}" data-fancybox="gallery"><img src="${base_url}assets/image/user/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;"></a>`;
+            imagePreview1.innerHTML = `<br><a href="${base_url}assets/image/user/${nama}" data-fancybox="gallery"><img src="${base_url}assets/image/user/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;"></a>`;
 
             if (!$.fn.DataTable.isDataTable('#detailTable')) {
                 detailTable = $('#detailTable').DataTable({

@@ -72,6 +72,14 @@ class manage_kembali_detail extends CI_Controller
         $this->app_data['title'] = 'Kelola transaksi';
         $this->app_data['id'] = $id;
         // $this->get_data($id);
+        $where = array('email' => $this->session->userdata('email'));
+        $data['user'] = $this->data->find('st_user', $where)->row_array();
+        $where = array('is_deleted' => '0');
+        $where = array('id_mitra' =>  $data['user']['id']);
+        //$this->app_data['selectVariant'] = $this->data->find('paket', $where)->result();
+
+        $this->app_data['select'] = $this->data->find('product_has_category', $where)->result();
+
 
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
@@ -81,10 +89,27 @@ class manage_kembali_detail extends CI_Controller
         $this->load->view('js-custom', $this->app_data);
     }
 
+    public function get_data_penyewa($id)
+    {
+        $query = [
+            'select' => 'c.*',
+            'from' => 'transaksi a',
+            'join' => [
+                'st_user c, c.id = a.id_user'
+            ],
+            'where' => [
+                'a.is_deleted' => 0,
+                'a.id' => $id,
+            ]
+        ];
+        $result = $this->data->get($query)->result();
+        echo json_encode($result);
+    }
+
     public function get_data($id)
     {
         $query = [
-            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk, d.jumlah',
+            'select' => 'b.id as id_pr,DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk, d.jumlah',
             'from' => 'transaksi a',
             'join' => [
                 'st_user c, c.id = a.id_user',
@@ -105,22 +130,19 @@ class manage_kembali_detail extends CI_Controller
     {
         $id = $this->input->post('id');
         $query = [
-            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk',
-            'from' => 'transaksi a',
+            'select' => 'a.*, b.name',
+            'from' => 'product a',
             'join' => [
-                'st_user c, c.id = a.id_user',
-                'detail_transaksi d, d.id_transaksi = a.id',
-                'product b, b.id = d.id_produk',
-
+                'product_has_category b, b.id = a.id_category'
             ],
             'where' => [
-                'a.is_deleted' => 0,
-                'a.id' => $id,
-            ]
+                'a.id' => $id
+            ],
         ];
         $result = $this->data->get($query)->result();
         echo json_encode($result);
     }
+
 
     public function kembali_data1($id)
     {

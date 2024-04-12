@@ -7,6 +7,11 @@ $("#status").on("change", function () {
     filterData();
 });
 
+$("#kategori").select2({
+	dropdownParent: $("#exampleModal"),
+	theme: "bootstrap4"
+});
+
 $(function () {
     $('#tanggalWrapper').datetimepicker({
         format: 'YYYY-MM-DD',
@@ -124,8 +129,8 @@ function get_data($id) {
                         className: "text-center",
                         render: function (data, type, row) {
                                 return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
+                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#exampleModal" title="detail" onclick="submit(' +
+                                    row.id_pr +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
                         },
@@ -148,57 +153,21 @@ function submit(x) {
     $.ajax({
         type: "POST",
         data: "id=" + x,
-        url: base_url + _controller + "/get_data_id",
+        url: base_url + "/" + _controller + "/get_data_id",
         dataType: "json",
         success: function (hasil) {
             $("[name='id']").val(hasil[0].id);
-            $("[name='nama']").val(hasil[0].name);
+            $("[name='judul']").val(hasil[0].nama_produk);
+            $("[name='stok']").val(hasil[0].stok);
+            $("[name='harga']").val(hasil[0].harga);
+            $("[name='type']").val(hasil[0].type);
+            $("[name='deskripsi']").val(hasil[0].deskripsi);
+            $("#kategori").val(hasil[0].id_category).trigger("change");
+            $("[name='ket']").val(hasil[0].ket);
             var nama = hasil[0].image;
-            // console.log(nama);
-            imagePreview1.innerHTML = `<br><a href="${base_url}assets/image/user/${nama}" data-fancybox="gallery"><img src="${base_url}assets/image/user/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;"></a>`;
-
-            if (!$.fn.DataTable.isDataTable('#detailTable')) {
-                detailTable = $('#detailTable').DataTable({
-                    destroy: true,
-                    data: hasil,
-                    columns: [
-                        { data: 'tgl_booking_date' },
-                        { data: 'nama_produk' },
-                        {
-                            data: "image_produk",
-                            className: "text-center",
-                            render: function (data, type, row) {
-                                var imageUrl = base_url + "assets/image/produk/" + data;
-                                return (
-                                    '<a href="' +
-                                    imageUrl +
-                                    '" data-fancybox="gallery"><img src="' +
-                                    imageUrl +
-                                    '" style="max-width: 100px; max-height: 400px;"></a>'
-                                );
-                            },
-                        },
-                    ],
-                    initComplete: function () {
-                        $("th").css("text-align", "center");
-                    },
-                });
-            } else {
-                detailTable.clear().rows.add(hasil).draw();
-            }
-
-            if (hasil[0].status === "1") {
-                $('#btn-ubah').show();
-			} else if (hasil[0].status === "3") {
-                $('#btn-ubah').hide();
-                $('#btn-tolak').hide();
-            } else{
-                $('#btn-ubah').hide();
-			}
+            imagePreview.innerHTML = `<br><img src="${base_url}assets/image/produk/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;">`;
         },
     });
-    delete_form();
-    delete_error();
 }
 
 function terima_data() {
@@ -254,6 +223,27 @@ function tolak_data() {
         },
         error: function (xhr, status, error) {
             console.error("AJAX Error: " + error);
+        },
+    });
+}
+
+get_data_penyewa(_id);
+function get_data_penyewa(id) {
+    //console.log(id);
+    $.ajax({
+        url: base_url + _controller + "/get_data_penyewa/"+ id,
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+            // console.log(data);
+            $("#nama").val(data[0].name);
+            $("#telepon").val(data[0].phone_number);
+            $("#alamat").val(data[0].address);
+            var imageUrl = base_url + "assets/image/user/" + data[0].image;
+            $("#imageProfil").html(`<img src="${imageUrl}" class="img-thumbnail" style="width: 100px; height: auto;">`);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            console.log(xhr.statusText);
         },
     });
 }

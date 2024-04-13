@@ -255,3 +255,66 @@ function get_data_penyewa(id) {
         },
     });
 }
+
+get_data_denda(_id);
+$(document).ready(function() {
+    // Ambil nilai dari input telat, denda, dan total
+    var telatInput = $("#telat");
+    var dendaInput = $("#denda");
+    var totalInput = $("#total");
+
+    // Hitung total
+    function calculateTotal() {
+        var telat = parseFloat(telatInput.val()) || 0;
+        var denda = parseFloat(dendaInput.val()) || 0;
+        var total = telat + denda;
+        totalInput.val(total);
+    }
+
+    // Event listener untuk perubahan nilai input telat dan denda
+    telatInput.on("input", calculateTotal);
+    dendaInput.on("input", function() {
+        var denda = parseFloat(dendaInput.val()) || 0;
+        dendaInput.val(denda);
+        calculateTotal();
+    });
+
+    // Hitung total saat halaman dimuat
+    get_data_denda(_id, function() {
+        calculateTotal();
+    });
+});
+
+function get_data_denda(id, callback) {
+    $.ajax({
+        url: base_url + _controller + "/get_data_denda/" + id,
+        method: "GET",
+        dataType: "json",
+        success: function(data) {
+            if (data && data.length > 0 && data[0].telat != null && data[0].telat !== "") {
+                $("#telat").val(data[0].telat);
+                $("#denda").val(data[0].ganti_rugi);
+            } else {
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var tenggat = new Date(data[0].tgl_tenggat);
+                tenggat.setHours(0, 0, 0, 0);
+                var denda = 0;
+                if (today > tenggat) {
+                    var timeDiff = today.getTime() - tenggat.getTime();
+                    var daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    denda = daysDiff * 10000;
+                    $("#telat").val(denda);
+                    $("#denda").val(0);
+                } else {
+                    $("#telat").val(0);
+                    $("#denda").val(0);
+                }
+            }
+            callback();
+        },
+        error: function(xhr, textStatus, errorThrown) {
+            console.log(xhr.statusText);
+        },
+    });
+}

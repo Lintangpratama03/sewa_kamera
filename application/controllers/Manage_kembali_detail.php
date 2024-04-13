@@ -106,6 +106,23 @@ class manage_kembali_detail extends CI_Controller
         echo json_encode($result);
     }
 
+    public function get_data_denda($id)
+    {
+        $query = [
+            'select' => 'c.telat,c.ganti_rugi,c.total, a.*',
+            'from' => 'transaksi a',
+            'leftjoin' => [
+                'detail_denda c, a.id = c.id_transaksi'
+            ],
+            'where' => [
+                'a.is_deleted' => 0,
+                'a.id' => $id,
+            ]
+        ];
+        $result = $this->data->get($query)->result();
+        echo json_encode($result);
+    }
+
     public function get_data($id)
     {
         $query = [

@@ -20,7 +20,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-sm-4">
-                        <label for="label">-- Detail Penyewa --</label>
+                        <label for="label" style="font-size: larger;">-- Detail Penyewa --</label>
                         <div class="row mb-1">
                             <label for="nama" class="col-sm-2 col-form-label">Nama</label>
                             <div class="col-sm-8">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     <div class="col-sm-8">
-                        <label for="label">-- Detail Kamera Yang di Sewa --</label>
+                        <label for="label" style="font-size: larger;">-- Detail Kamera Yang di Sewa --</label>
                         <br>
                         <table id="example" class="table table-hover table-bordered" style="width:100%">
                             <thead class="table-light">
@@ -70,10 +70,38 @@
                         </table>
                     </div>
                 </div>
+                <div class="row" style="margin-top: 20px;">
+                    <div class="col-sm-6 offset-sm-4">
+                        <label for="telat" class="col-form-label" style="font-size: larger;">-- Detail Denda --</label>
+                        <br>
+                        <label for="telat" class="col-sm-2 col-form-label">Denda Telat</label>
+                        <div class="row mb-1">
+                            <div class="col-sm-8">
+                                <input type="hidden" class="form-control" id="id" name="id">
+                                <input type="number" class="form-control" id="telat" name="telat" readonly>
+                                <small class="text-danger pl-1" id="error-telat"></small>
+                            </div>
+                        </div>
+                        <label for="denda" class="col-sm-6 col-form-label">Denda Tambahan/Ganti Rugi</label>
+                        <div class="row mb-1">
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="denda" name="denda">
+                                <small class="text-danger pl-1" id="error-denda"></small>
+                            </div>
+                        </div>
+                        <label for="total" class="col-sm-2 col-form-label">Total</label>
+                        <div class="row mb-1">
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="total" name="total" readonly>
+                                <small class="text-danger pl-1" id="error-total"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-12 text-center">
                         <a href="<?= base_url('manage-kembali') ?>" class="btn btn-secondary">Kembali</a>
-                        <button type="button" class="btn btn-success" id="confirmButton">Konfirmasi</button>
+                        <button type="button" class="btn btn-success" id="btn-con">Konfirmasi</button>
                     </div>
                 </div>
             </div>

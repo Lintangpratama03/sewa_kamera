@@ -76,6 +76,19 @@ class Data_model extends CI_Model
                 $this->db->join($param_1, $param_2, $param_3);
             }
         }
+        if (isset($data['leftjoin'])) {
+            foreach ($data['leftjoin'] as $item_join) {
+                $explode_item_join = explode(',', $item_join);
+                //param 1
+                isset($explode_item_join[0]) ? $param_1 = $explode_item_join[0] : $param_1 = '';
+                //param 2
+                isset($explode_item_join[1]) ? $param_2 = $explode_item_join[1] : $param_2 = '';
+                //param 3
+                isset($explode_item_join[2]) ? $param_3 = $explode_item_join[2] : $param_3 = '';
+                $this->db->join($param_1, $param_2, 'LEFT', $param_3);
+            }
+        }
+
         if (isset($data['join_custom'])) {
             foreach ($data['join_custom'] as $table_name => $item_join) {
                 $explode_item_join = explode(',', $item_join);

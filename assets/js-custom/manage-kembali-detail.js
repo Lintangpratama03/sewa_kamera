@@ -349,7 +349,9 @@ $(document).ready(function() {
                         text: 'Data has been updated successfully.'
                     }).then(() => {
                         $("#exampleModal").modal("hide");
+                        window.location.href = base_url + 'manage-kembali';
                     });
+
                 } else {
                     console.error("Error retrieving id_d values.");
                 }

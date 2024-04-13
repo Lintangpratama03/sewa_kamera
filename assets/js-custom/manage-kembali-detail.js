@@ -318,3 +318,115 @@ function get_data_denda(id, callback) {
         },
     });
 }
+
+
+// PROSES KONFIRMASI
+
+
+
+$(document).ready(function() {
+    $('#btn-con').click(function() {
+        var id_transaksi = _id;
+        $.ajax({
+            type: "POST",
+            url: base_url + _controller + "/get_id_d",
+            data: {
+                id_transaksi: id_transaksi
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.success && response.id_d_array) {
+                    // Update the product table
+                    update_product(response.id_d_array);
+                    var telat = parseFloat($('#telat').val()) || 0;
+                    var denda = parseFloat($('#denda').val()) || 0;
+                    var total = parseFloat($('#total').val()) || 0;
+                    update_denda(id_transaksi, telat, denda, total);
+                    update_detail_transaksi(response.id_d_array, $("[name='keterangan']").val());
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data has been updated successfully.'
+                    }).then(() => {
+                        $("#exampleModal").modal("hide");
+                    });
+                } else {
+                    console.error("Error retrieving id_d values.");
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error: " + error);
+            }
+        });
+    });
+});
+
+// Update product table
+function update_product(id_d_array) {
+    $.ajax({
+        type: "POST",
+        url: base_url + _controller + "/update_product",
+        data: {
+            id_d_array: id_d_array
+        },
+        dataType: "json",
+        success: function(response) {
+            if (response.success) {
+                console.log("Product stock updated successfully.");
+            } else {
+                console.error("Error updating product stock.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+}
+
+// Update detail_denda table
+function update_denda(id_transaksi, telat, denda, total) {
+    $.ajax({
+        type: "POST",
+        url: base_url + _controller + "/update_denda",
+        data: {
+            id_transaksi: id_transaksi,
+            telat: telat,
+            denda: denda,
+            total: total
+        },
+        dataType: "json",
+        success: function(response) {
+            if (response.success) {
+                console.log("Denda data updated successfully.");
+            } else {
+                console.error("Error updating denda data.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+}
+
+// Update detail_transaksi table
+function update_detail_transaksi(id_d_array, keterangan) {
+    $.ajax({
+        type: "POST",
+        url: base_url + _controller + "/kembali_data",
+        data: {
+            id_d_array: id_d_array,
+            keterangan: keterangan
+        },
+        dataType: "json",
+        success: function(response) {
+            if (response.success) {
+                console.log("Detail transaksi updated successfully.");
+            } else {
+                console.error("Error updating detail transaksi.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error: " + error);
+        }
+    });
+}

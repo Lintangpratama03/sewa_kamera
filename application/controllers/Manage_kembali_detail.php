@@ -230,4 +230,125 @@ class manage_kembali_detail extends CI_Controller
         }
         echo json_encode($response);
     }
+    // KONFIRMASI
+    public function update_product()
+    {
+        $id_d_array = $this->input->post('id_d_array');
+
+        if (is_array($id_d_array) && !empty($id_d_array)) {
+            foreach ($id_d_array as $id_d) {
+                // Get the product details based on the id_d
+                $query = [
+                    'select' => 'b.id, b.stok, d.jumlah, d.id_produk',
+                    'from' => 'detail_transaksi d',
+                    'join' => [
+                        'product b, b.id = d.id_produk'
+                    ],
+                    'where' => [
+                        'd.id' => $id_d
+                    ]
+                ];
+                $result = $this->data->get($query)->row();
+
+                if ($result) {
+                    // Update the product stock
+                    $data = array(
+                        'stok' => $result->stok + $result->jumlah
+                    );
+                    $where = array('id' => $result->id_produk);
+                    $updated = $this->data->update('product', $where, $data);
+
+                    if (!$updated) {
+                        $response['success'] = false;
+                        echo json_encode($response);
+                        return;
+                    }
+                } else {
+                    $response['success'] = false;
+                    echo json_encode($response);
+                    return;
+                }
+            }
+
+            $response['success'] = true;
+            echo json_encode($response);
+        } else {
+            $response['success'] = false;
+            echo json_encode($response);
+        }
+    }
+
+    public function update_denda()
+    {
+        $id_transaksi = $this->input->post('id_transaksi');
+        $telat = $this->input->post('telat');
+        $denda = $this->input->post('denda');
+        $total = $this->input->post('total');
+        $where = array('id_transaksi' => $id_transaksi);
+        $denda_record = $this->data->find('detail_denda', $where)->row_array();
+
+
+        $data = array(
+            'telat' => $telat,
+            'ganti_rugi' => $denda,
+            'total' => $total
+        );
+
+        if ($denda_record) {
+            $updated = $this->data->update('detail_denda', $where, $data);
+            if ($updated) {
+                $response['success'] = true;
+                $data1 = array(
+                    'status' => 5
+                );
+                $where1 = array('id' => $id_transaksi);
+                $this->data->update('transaksi', $where1, $data1);
+            } else {
+                $response['success'] = false;
+            }
+        } else {
+            $data['id_transaksi'] = $id_transaksi;
+            $inserted = $this->data->insert('detail_denda', $data);
+            if ($inserted) {
+                $response['success'] = true;
+                $data1 = array(
+                    'status' => 5
+                );
+                $where1 = array('id' => $id_transaksi);
+                $this->data->update('transaksi', $where1, $data1);
+            } else {
+                $response['success'] = false;
+            }
+        }
+
+
+        echo json_encode($response);
+    }
+
+    public function get_id_d()
+    {
+        $id_transaksi = $this->input->post('id_transaksi');
+
+        $query = [
+            'select' => 'd.id as id_d',
+            'from' => 'detail_transaksi d',
+            'where' => [
+                'd.status' => '1',
+                'd.id_transaksi' => $id_transaksi
+            ]
+        ];
+
+        $result = $this->data->get($query)->result_array();
+
+        if ($result) {
+            $id_d_array = array_column($result, 'id_d');
+            $response['success'] = true;
+            $response['id_d_array'] = $id_d_array;
+        } else {
+            $response['success'] = false;
+            $response['id_d_array'] = [];
+        }
+
+        echo json_encode($response);
+    }
 }

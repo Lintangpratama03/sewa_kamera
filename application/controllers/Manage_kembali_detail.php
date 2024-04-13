@@ -109,7 +109,7 @@ class manage_kembali_detail extends CI_Controller
     public function get_data($id)
     {
         $query = [
-            'select' => 'b.id as id_pr,DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk, d.jumlah',
+            'select' => 'd.id as id_pr,DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk, d.jumlah, d.status as status_pr',
             'from' => 'transaksi a',
             'join' => [
                 'st_user c, c.id = a.id_user',
@@ -130,13 +130,16 @@ class manage_kembali_detail extends CI_Controller
     {
         $id = $this->input->post('id');
         $query = [
-            'select' => 'a.*, b.name',
-            'from' => 'product a',
+            'select' => 'b.*, e.name, d.jumlah as jml, d.id as id_d,d.keterangan as ket_d',
+            'from' => 'transaksi a',
             'join' => [
-                'product_has_category b, b.id = a.id_category'
+                'st_user c, c.id = a.id_user',
+                'detail_transaksi d, d.id_transaksi = a.id',
+                'product b, b.id = d.id_produk',
+                'product_has_category e, e.id = b.id_category',
             ],
             'where' => [
-                'a.id' => $id
+                'd.id' => $id
             ],
         ];
         $result = $this->data->get($query)->result();
@@ -144,20 +147,21 @@ class manage_kembali_detail extends CI_Controller
     }
 
 
-    public function kembali_data1($id)
+    public function kembali_data()
     {
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
-        $id = $this->input->post('id');
+        $id_d = $this->input->post('id_d');
+        $keterangan = $this->input->post('keterangan');
         $timestamp = $this->db->query("SELECT NOW() as timestamp")->row()->timestamp;
 
         $data = array(
-            'status' => '2',
-            'tgl_jadi' => $timestamp,
+            'status' => '1',
+            'keterangan' => $keterangan
         );
-        $where = array('id' => $id);
+        $where = array('id' => $id_d);
 
-        $updated = $this->data->update('transaksi', $where, $data);
+        $updated = $this->data->update('detail_transaksi', $where, $data);
         if ($updated) {
             $response['success'] = "<script>$(document).ready(function () {
                 var Toast = Swal.mixin({
@@ -175,19 +179,23 @@ class manage_kembali_detail extends CI_Controller
         }
         echo json_encode($response);
     }
-    public function tolak_data()
+
+
+    public function tdk_kembali()
     {
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
-        $id = $this->input->post('id');
+        $id_d = $this->input->post('id_d');
+        $keterangan = $this->input->post('keterangan');
         $timestamp = $this->db->query("SELECT NOW() as timestamp")->row()->timestamp;
 
         $data = array(
-            'is_deleted' => '1',
+            'status' => '2',
+            'keterangan' => $keterangan
         );
-        $where = array('id' => $id);
+        $where = array('id' => $id_d);
 
-        $updated = $this->data->update('transaksi', $where, $data);
+        $updated = $this->data->update('detail_transaksi', $where, $data);
         if ($updated) {
             $response['success'] = "<script>$(document).ready(function () {
                 var Toast = Swal.mixin({

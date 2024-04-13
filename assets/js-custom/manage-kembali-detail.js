@@ -118,10 +118,16 @@ function get_data($id) {
                         },
                     },               
                     {
-                        data: "status",
+                        data: "status_pr",
                         className: "text-center",
                         render: function (data, type, row) {
-                            return '<button type="button" class="btn btn-outline-danger btn-xs">Belum Kembali</button>';
+                        if (data == "0") {
+                            return '<button type="button" class="btn btn-outline-warning btn-xs">Belum Kembali</button>';
+                        } else if (data == "1") {
+                            return '<button type="button" class="btn btn-outline-success btn-xs">Kembali</button>';
+                        } else if (data == "2") {
+                            return '<button type="button" class="btn btn-outline-danger btn-xs">Tidak Kembali</button>';
+                        }
                         },
                     },
                     {
@@ -157,13 +163,13 @@ function submit(x) {
         dataType: "json",
         success: function (hasil) {
             $("[name='id']").val(hasil[0].id);
+            $("[name='id_d']").val(hasil[0].id_d);
             $("[name='judul']").val(hasil[0].nama_produk);
-            $("[name='stok']").val(hasil[0].stok);
+            $("[name='jml']").val(hasil[0].jml);
             $("[name='harga']").val(hasil[0].harga);
             $("[name='type']").val(hasil[0].type);
-            $("[name='deskripsi']").val(hasil[0].deskripsi);
+            $("[name='keterangan']").val(hasil[0].ket_d);
             $("#kategori").val(hasil[0].id_category).trigger("change");
-            $("[name='ket']").val(hasil[0].ket);
             var nama = hasil[0].image;
             imagePreview.innerHTML = `<br><img src="${base_url}assets/image/produk/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;">`;
         },
@@ -172,10 +178,11 @@ function submit(x) {
 
 function terima_data() {
     var formData = new FormData();
-    formData.append("id", $("[name='id']").val());
+    formData.append("id_d", $("[name='id_d']").val());
+    formData.append("keterangan", $("[name='keterangan']").val());
     $.ajax({
         type: "POST",
-        url: base_url + _controller + "/terima_data",
+        url: base_url + _controller + "/kembali_data",
         data: formData,
         dataType: "json",
         processData: false,
@@ -188,9 +195,9 @@ function terima_data() {
                     $("#error-" + fieldName).html(response.errors[fieldName]);
                 }
             } else if (response.success) {
-                $("#detailPesan").modal("hide");
+                $("#exampleModal").modal("hide");
                 $("body").append(response.success);
-                get_data();
+                get_data(_id);
             }
         },
         error: function (xhr, status, error) {
@@ -200,10 +207,11 @@ function terima_data() {
 }
 function tolak_data() {
     var formData = new FormData();
-    formData.append("id", $("[name='id']").val());
+    formData.append("id_d", $("[name='id_d']").val());
+    formData.append("keterangan", $("[name='keterangan']").val());
     $.ajax({
         type: "POST",
-        url: base_url + _controller + "/tolak_data",
+        url: base_url + _controller + "/tdk_kembali",
         data: formData,
         dataType: "json",
         processData: false,
@@ -216,9 +224,9 @@ function tolak_data() {
                     $("#error-" + fieldName).html(response.errors[fieldName]);
                 }
             } else if (response.success) {
-                $("#detailPesan").modal("hide");
+                $("#exampleModal").modal("hide");
                 $("body").append(response.success);
-                get_data();
+                get_data(_id);
             }
         },
         error: function (xhr, status, error) {

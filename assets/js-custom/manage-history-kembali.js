@@ -112,7 +112,7 @@ function get_data() {
                         render: function (data, type, row) {
                             if (data == "5") {
                                 return (
-                                    '<a href="/sewa_kamera/history-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
+                                    '<a href="' + base_url + 'history-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
                                 );                                
                             }
                         },

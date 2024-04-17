@@ -148,7 +148,7 @@ function get_data() {
                         render: function (data, type, row) {
                             if (data == "4") {
                                 return (
-                                    '<a href="/sewa_kamera/manage-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
+                                    '<a href="' + base_url + 'manage-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
                                 );                                
                             }
                         },

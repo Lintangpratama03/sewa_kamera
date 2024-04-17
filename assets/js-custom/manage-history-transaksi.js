@@ -109,13 +109,11 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "4") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-info-circle"></i></button>'
-                                );
-                            }
+                            return (
+                                ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
+                                row.id +
+                                ')"><i class="fa-solid fa-eye"></i></button>'
+                            );
                         },
                     },
                 ],

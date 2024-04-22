@@ -88,7 +88,7 @@ class manage_history_transaksi extends CI_Controller
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'a.status' => 3,
+                'a.status >=' => 4,
                 'a.id_mitra' => $data['user']['id'],
             ]
         ];

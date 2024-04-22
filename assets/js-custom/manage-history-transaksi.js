@@ -102,7 +102,7 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            return '<button type="button" class="btn btn-block btn-success">BERHASIL DISEWA</button>';
+                            return '<button type="button" class="btn btn-outline-success btn-xs">BERHASIL DISEWA</button>';
                         },
                     },
                     {

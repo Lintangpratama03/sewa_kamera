@@ -75,10 +75,9 @@ class manage_history_kembali_detail extends CI_Controller
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
         $where = array('is_deleted' => '0');
-        $where = array('id_mitra' =>  $data['user']['id']);
         //$this->app_data['selectVariant'] = $this->data->find('paket', $where)->result();
 
-        $this->app_data['select'] = $this->data->find('product_has_category', $where)->result();
+        $this->app_data['select'] = $this->data->find('category', $where)->result();
 
 
         $this->load->view('template-mitra/start', $this->app_data);
@@ -153,7 +152,7 @@ class manage_history_kembali_detail extends CI_Controller
                 'st_user c, c.id = a.id_user',
                 'detail_transaksi d, d.id_transaksi = a.id',
                 'product b, b.id = d.id_produk',
-                'product_has_category e, e.id = b.id_category',
+                'category e, e.id = b.id_category',
             ],
             'where' => [
                 'd.id' => $id

@@ -8,6 +8,23 @@ function delete_form() {
 function delete_error() {
 	$("#error-nama").hide();
 }
+function previewImage(event) {
+	const imageInput = event.target;
+	const imagePreview = document.getElementById("imagePreview");
+
+	if (imageInput.files && imageInput.files[0]) {
+		const reader = new FileReader();
+
+		reader.onload = function (e) {
+			imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;">`;
+		};
+		$("#error-image").html("");
+
+		reader.readAsDataURL(imageInput.files[0]);
+	} else {
+		imagePreview.innerHTML = "";
+	}
+}
 
 $("#hapusKategori").on("show.bs.modal", function (e) {
 	var button = $(e.relatedTarget);
@@ -35,6 +52,18 @@ function get_data() {
 						},
 					},
 					{ data: "name" },
+					{
+						data: "image",
+						className: "text-center",
+						render: function (data, type, row) {
+							var imageUrl = base_url + "assets/image/kategori/" + data;
+							return (
+								'<img src="' +
+								imageUrl +
+								'" style="max-width: 100px; max-height: 400px;">'
+							);
+						},
+					},
 					{
 						data: null,
 						className: "text-center",
@@ -78,6 +107,8 @@ function submit(x) {
 			success: function (hasil) {
 				$("[name='id']").val(hasil[0].id);
 				$("[name='nama']").val(hasil[0].name);
+				var nama = hasil[0].image;
+				imagePreview.innerHTML = `<br><img src="${base_url}assets/image/kategori/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;">`;
 			},
 		});
 	}
@@ -88,7 +119,10 @@ function submit(x) {
 function insert_data() {
 	var formData = new FormData();
 	formData.append("nama", $("[name='nama']").val());
-
+	var imageInput = $("[name='image']")[0];
+	if (imageInput.files.length > 0) {
+		formData.append("image", imageInput.files[0]);
+	}
 	$.ajax({
 		type: "POST",
 		url: base_url + "/" + _controller + "/insert_data",
@@ -119,7 +153,10 @@ function edit_data() {
 	var formData = new FormData();
 	formData.append("id", $("[name='id']").val());
 	formData.append("nama", $("[name='nama']").val());
-
+	var imageInput = $("[name='image']")[0];
+	if (imageInput.files.length > 0) {
+		formData.append("image", imageInput.files[0]);
+	}
 	$.ajax({
 		type: "POST",
 		url: base_url + _controller + "/edit_data",

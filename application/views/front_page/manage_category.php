@@ -19,14 +19,14 @@
         <div class="card">
             <h5 class="card-header">Data Kategori Produk</h5>
             <div class="card-body">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
-                    onclick="submit('tambah')"><i class="fa-solid fa-circle-plus"></i> Input data</button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="submit('tambah')"><i class="fa-solid fa-circle-plus"></i> Input data</button>
                 <hr>
                 <table id="example" class="table table-hover table-bordered" style="width:100%">
                     <thead class="table-light">
                         <tr>
                             <th width="5%">No</th>
                             <th width="20%">Nama Kategori</th>
+                            <th width="20%">Foto</th>
                             <th width="10%">Aksi</th>
                         </tr>
                     </thead>
@@ -57,23 +57,38 @@
                                 <label for="nama" class="col-lg-2 col-form-label">Nama Kategori</label>
                                 <div class="col-lg-10">
                                     <input type="hidden" name="id" class="form-control">
-                                    <input type="text" name="nama" id="nama" class="form-control"
-                                        placeholder="Masukkan nama kategori">
+                                    <input type="text" name="nama" id="nama" class="form-control" placeholder="Masukkan nama kategori">
                                     <small class="text-danger pl-1" id="error-nama"></small>
                                 </div>
                             </div>
+                            <div class="row">
+                                <label for="image" class="col-lg-2">Foto</label>
+                                <div class="col-lg-10">
+                                    <div class="input-group">
+                                        <div class="custom-file">
+                                            <input type="file" class="custom-file-input" name="image" id="image" onchange="previewImage(event)">
+                                            <label class="custom-file-label" for="image">Pilih file</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 offset-2">
+                                    <small class="text-danger pl-1" id="error-image"></small>
+                                    <div id="imagePreview"></div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
             <div class="modal-footer d-flex justify-content-start">
                 <div class="col-lg-2">
-                    <button type="button" id="btn-tambah" onclick="insert_data()"
-                        class="btn btn-outline-primary btn-block">Tambah</button>
+                    <button type="button" id="btn-tambah" onclick="insert_data()" class="btn btn-outline-primary btn-block">Tambah</button>
                 </div>
                 <div class="col-lg-2">
-                    <button type="button" id="btn-ubah" onclick="edit_data()"
-                        class="btn btn-outline-primary btn-block">Edit</button>
+                    <button type="button" id="btn-ubah" onclick="edit_data()" class="btn btn-outline-primary btn-block">Edit</button>
                 </div>
             </div>
         </div>

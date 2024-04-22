@@ -72,10 +72,9 @@ class Manage_product extends CI_Controller
         $data['user'] = $this->data->find('st_user', $where)->row_array();
 
         $where = array('is_deleted' => '0');
-        $where = array('id_mitra' =>  $data['user']['id']);
         //$this->app_data['selectVariant'] = $this->data->find('paket', $where)->result();
 
-        $this->app_data['select'] = $this->data->find('product_has_category', $where)->result();
+        $this->app_data['select'] = $this->data->find('category', $where)->result();
         $this->app_data['title'] = 'Kelola Produk';
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
@@ -96,7 +95,7 @@ class Manage_product extends CI_Controller
             'select' => 'a.*, b.name',
             'from' => 'product a',
             'join' => [
-                'product_has_category b, b.id = a.id_category',
+                'category b, b.id = a.id_category',
             ],
             'where' => [
                 'a.is_deleted' => '0',
@@ -113,7 +112,7 @@ class Manage_product extends CI_Controller
             $input = $this->input->get('searchTerm', TRUE);
             $query = [
                 'select' => 'id, name',
-                'from' => 'product_has_category',
+                'from' => 'category',
                 'like' => [
                     'name' => "$input, both"
                 ],
@@ -122,7 +121,7 @@ class Manage_product extends CI_Controller
         } else {
             $query = [
                 'select' => 'id, name',
-                'from' => 'product_has_category',
+                'from' => 'category',
             ];
             $data = $this->data->get($query)->result();
         }
@@ -137,7 +136,7 @@ class Manage_product extends CI_Controller
             'select' => 'a.*, b.name',
             'from' => 'product a',
             'join' => [
-                'product_has_category b, b.id = a.id_category'
+                'category b, b.id = a.id_category'
             ],
             'where' => [
                 'a.id' => $id

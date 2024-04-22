@@ -60,6 +60,7 @@ $route['logout_1'] = 'Auth_user/logout';
 $route['dashboard'] = 'Dashboard_admin';
 $route['manage-pelanggan-daftar'] = 'Manage_user_admin';
 $route['manage-pelanggan-aktif'] = 'Manage_user_aktif_admin';
+$route['manage-kategori'] = 'Manage_category';
 $route['manage-mitra-daftar'] = 'Manage_mitra_admin';
 $route['manage-mitra-aktif'] = 'Manage_mitra_aktif_admin';
 $route['admin'] = 'Admin';
@@ -74,7 +75,6 @@ $route['registrasi'] = 'Auth_user/register';
 $route['profil-mitra'] = 'Manage_mitra';
 
 $route['manage-product'] = 'Manage_product';
-$route['manage-kategori'] = 'Manage_category';
 $route['manage-ulasan'] = 'Manage_ulasan';
 
 $route['manage-transaksi'] = 'Manage_transaksi';

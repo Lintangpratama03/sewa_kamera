@@ -95,7 +95,7 @@ class Dashboard_mitra extends CI_Controller
 		$this->app_data['produk_pinjam'] = $produk_pinjam_result->total_stok;
 
 		$this->app_data['total_produk'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
-		$this->app_data['jumlah_kategori'] = $this->data->count_wheree('product_has_category', 'is_deleted', '0', 'id_mitra', $id);
+		$this->app_data['jumlah_kategori'] = $this->data->count_where('category', 'is_deleted', '0');
 
 		$this->load->view('template-mitra/start', $this->app_data);
 		$this->load->view('template-mitra/header', $this->app_data);

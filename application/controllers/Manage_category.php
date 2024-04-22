@@ -11,13 +11,13 @@ class Manage_category extends CI_Controller
         parent::__construct();
         $this->_init();
         if (!$this->is_logged_in()) {
-            redirect('dashboard');
+            redirect('dashboard-mitra');
         }
     }
 
     public function is_logged_in()
     {
-        return $this->session->userdata('logged_in_1') === TRUE;
+        return $this->session->userdata('logged_in') === TRUE;
     }
 
     private function _init()
@@ -31,7 +31,7 @@ class Manage_category extends CI_Controller
             'select' => 'id_parent,name, icon, link, type, is_admin',
             'from' => 'app_menu',
             'where' => [
-                'is_admin' => '2'
+                'is_admin' => '1'
             ]
         ];
 
@@ -40,7 +40,7 @@ class Manage_category extends CI_Controller
             'from' => 'app_menu',
             'where' => [
                 'type' => '2',
-                'is_admin' => '2'
+                'is_admin' => '1'
             ]
         ];
 
@@ -49,7 +49,7 @@ class Manage_category extends CI_Controller
             'from' => 'app_menu',
             'where' => [
                 'type' => '3',
-                'is_admin' => '2'
+                'is_admin' => '1'
             ]
         ];
 
@@ -83,8 +83,7 @@ class Manage_category extends CI_Controller
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
         $where = array('is_deleted' => '0');
-        $where = array('id_mitra' =>  $data['user']['id']);
-        $result = $this->data->find('product_has_category', $where)->result();
+        $result = $this->data->find('category', $where)->result();
         echo json_encode($result);
     }
 
@@ -92,28 +91,71 @@ class Manage_category extends CI_Controller
     {
         $id = $this->input->post('id');
         $where = array('id' => $id);
-        $result = $this->data->find('product_has_category', $where)->result();
+        $result = $this->data->find('category', $where)->result();
         echo json_encode($result);
     }
 
     public function insert_data()
     {
-        $this->form_validation->set_rules('nama', 'Nama', 'required|trim|is_unique[product_has_category.name]');
+        $this->form_validation->set_rules('nama', 'Nama', 'required|trim|is_unique[category.name]');
 
         if ($this->form_validation->run() == false) {
             $response['errors'] = $this->form_validation->error_array();
+            if (empty($_FILES['image']['name'])) {
+                $response['errors']['image'] = "Foto harus diupload";
+            }
         } else {
             $where = array('email' => $this->session->userdata('email'));
             $data['user'] = $this->data->find('st_user', $where)->row_array();
             $nama = $this->input->post('nama');
-            $data = array(
-                'name' => $nama,
-                'id_mitra' => $data['user']['id'],
-                'created_by' => $data['user']['id'],
-            );
-            $this->data->insert('product_has_category', $data);
 
-            $response['success'] = "<script>$(document).ready(function () {
+            if (empty($_FILES['image']['name'])) {
+                $response['errors']['image'] = "Foto harus diupload";
+            } else {
+                $data = array(
+                    'name' => $nama,
+                    'created_by' => $data['user']['id'],
+                );
+                if (!empty($_FILES['image']['name'])) {
+                    $currentDateTime = date('Y-m-d_H-i-s');
+                    $config['upload_path'] = './assets/image/kategori/';
+                    $config['allowed_types'] = 'gif|jpg|jpeg|png';
+                    $config['file_name'] = "Kategori-" . $currentDateTime;
+                    $config['max_size'] = 2048;
+
+                    $this->load->library('upload', $config);
+
+                    if (!$this->upload->do_upload('image')) {
+                        $response['errors']['image'] = strip_tags($this->upload->display_errors());
+                    } else {
+                        $uploaded_data = $this->upload->data();
+
+                        $targetWidth = 1920;
+                        $targetHeight = 930;
+
+                        $sourcePath = $uploaded_data['full_path'];
+                        $imageInfo = getimagesize($sourcePath);
+                        $sourceWidth = $imageInfo[0];
+                        $sourceHeight = $imageInfo[1];
+
+                        if (($sourceWidth / $sourceHeight) != ($targetWidth / $targetHeight)) {
+                            $config['image_library'] = 'gd2';
+                            $config['source_image'] = $sourcePath;
+                            $config['maintain_ratio'] = FALSE;
+                            $config['width'] = $targetWidth;
+                            $config['height'] = $targetHeight;
+
+                            $this->load->library('image_lib', $config);
+                            $this->image_lib->resize();
+
+                            $data['image'] = $config['file_name'] . $uploaded_data['file_ext'];
+                        } else {
+                            $data['image'] = $uploaded_data['file_name'];
+                        }
+                        $this->data->insert('category', $data);
+                    }
+
+                    $response['success'] = "<script>$(document).ready(function () {
                 var Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -126,8 +168,10 @@ class Manage_category extends CI_Controller
                     title: 'Anda telah melakukan aksi tambah data Data berhasil dimasukkan'
                   })
               });</script>";
+                }
+            }
+            echo json_encode($response);
         }
-        echo json_encode($response);
     }
 
     public function edit_data()
@@ -136,6 +180,9 @@ class Manage_category extends CI_Controller
 
         if ($this->form_validation->run() == false) {
             $response['errors'] = $this->form_validation->error_array();
+            if (empty($_FILES['image']['name'])) {
+                $response['errors']['image'] = "Foto harus diupload";
+            }
         } else {
             $where = array('email' => $this->session->userdata('email'));
             $data['user'] = $this->data->find('st_user', $where)->row_array();
@@ -151,9 +198,52 @@ class Manage_category extends CI_Controller
             );
 
             $where = array('id' => $id);
-            $this->data->update('product_has_category', $where, $data);
+            $updated = $this->data->update('category', $where, $data);
+            if (!$updated) {
+                $response['errors']['database'] = "Failed to update data in the database.";
+            } else {
+                if (!empty($_FILES['image']['name'])) {
+                    $currentDateTime = date('Y-m-d_H-i-s');
+                    $config['upload_path'] = './assets/image/kategori/';
+                    $config['allowed_types'] = 'gif|jpg|jpeg|png';
+                    $config['file_name'] = "Kategori-" . $currentDateTime;
+                    $config['max_size'] = 2048;
+                    $this->load->library('upload', $config);
 
-            $response['success'] = "<script>$(document).ready(function () {
+                    if ($this->upload->do_upload('image')) {
+                        $upload_data = $this->upload->data();
+
+                        $targetWidth = 1920;
+                        $targetHeight = 930;
+
+                        $sourcePath = $upload_data['full_path'];
+                        $imageInfo = getimagesize($sourcePath);
+                        $sourceWidth = $imageInfo[0];
+                        $sourceHeight = $imageInfo[1];
+
+                        if (($sourceWidth / $sourceHeight) != ($targetWidth / $targetHeight)) {
+                            $config['image_library'] = 'gd2';
+                            $config['source_image'] = $sourcePath;
+                            $config['maintain_ratio'] = FALSE;
+                            $config['width'] = $targetWidth;
+                            $config['height'] = $targetHeight;
+
+                            $this->load->library('image_lib', $config);
+                            $this->image_lib->resize();
+
+                            $file_name = $config['file_name'] . $upload_data['file_ext'];
+                        } else {
+                            $file_name = $upload_data['file_name'];
+                        }
+
+                        $data = array('image' => $file_name);
+                        $where = array('id' => $id);
+                        $this->data->update('category', $where, $data);
+                    } else {
+                        $response['errors']['image'] = strip_tags($this->upload->display_errors());
+                    }
+                }
+                $response['success'] = "<script>$(document).ready(function () {
                 var Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -166,6 +256,7 @@ class Manage_category extends CI_Controller
                     title: 'Anda telah melakukan aksi edit data Data berhasil diedit'
                   })
               });</script>";
+            }
         }
         echo json_encode($response);
     }
@@ -184,7 +275,7 @@ class Manage_category extends CI_Controller
         );
         $where = array('id' => $id);
 
-        $updated = $this->data->update('product_has_category', $where, $data);
+        $updated = $this->data->update('category', $where, $data);
         if ($updated) {
             $response['success'] = "<script>$(document).ready(function () {
                 var Toast = Swal.mixin({

@@ -46,9 +46,15 @@ class Data_model extends CI_Model
         $query = $this->db->query("SELECT COUNT(*) as count FROM $table where $column = $id");
         return $query->row()->count;
     }
+
     public function count_wheree($table, $column, $id, $and, $ids)
     {
         $query = $this->db->query("SELECT COUNT(*) as count FROM $table where $column = $id and $and = $ids and is_deleted=0");
+        return $query->row()->count;
+    }
+    public function sum($table, $column, $id, $and, $ids, $and1, $ids1)
+    {
+        $query = $this->db->query("SELECT COUNT(*) as count FROM $table where $column = $id and $and = $ids and $and1 = $ids1 and is_deleted=0");
         return $query->row()->count;
     }
 

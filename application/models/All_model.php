@@ -178,7 +178,7 @@ class All_model extends CI_Model
     }
     public function get_mitra()
     {
-        $data = $this->db->get_where('st_user', ['id_credential' => 4])->result();
+        $data = $this->db->get_where('st_user', ['id_credential' => 2, 'is_aktif' => 1])->result();
         $modifiedData = $this->modify_data($data, 'user');
         return $modifiedData;
     }
@@ -210,7 +210,7 @@ class All_model extends CI_Model
                 $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $item->gambar_url = $gambarUrl;
             } elseif ($type == 'category') {
-                $namaGambar = $item->image_category;
+                $namaGambar = $item->image;
                 $gambarUrl = base_url('assets/image/category/' . $namaGambar);
                 $item->gambar_url = $gambarUrl;
             } elseif ($type == 'user') {

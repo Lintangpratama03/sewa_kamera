@@ -97,6 +97,18 @@ class Dashboard_mitra extends CI_Controller
 		$this->app_data['total_produk'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
 		$this->app_data['jumlah_kategori'] = $this->data->count_where('category', 'is_deleted', '0');
 
+		$jumlah_sewa_perbulan = "SELECT COUNT(transaksi.id) AS jumlah
+								FROM transaksi
+								WHERE transaksi.status >= '4' 			
+								AND transaksi.id_mitra = $id";
+		$jumlah_sewa_perbulan_result = $this->db->query($jumlah_sewa_perbulan, array($id))->row();
+		$this->app_data['jumlah_sewa'] = $jumlah_sewa_perbulan_result->jumlah;
+
+
+		$tahun = date('Y');
+		$data_chart = $this->chart_sewa_bulanan($id, $tahun);
+		$this->app_data['chartData'] = $data_chart;
+
 		$this->load->view('template-mitra/start', $this->app_data);
 		$this->load->view('template-mitra/header', $this->app_data);
 		$this->load->view('front_page/dashboard', $this->app_data);
@@ -105,7 +117,23 @@ class Dashboard_mitra extends CI_Controller
 		$this->load->view('js-custom', $this->app_data);
 	}
 
-	public function get_data()
+	// public function get_data()
+	// {
+	// 	$query = [
+	// 		'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.card_image, a.username, a.password, a.last_login, b.name as akses',
+	// 		'from' => 'st_user a',
+	// 		'join' => [
+	// 			'app_credential b, b.id = a.id_credential'
+	// 		],
+	// 		'where' => [
+	// 			'a.is_deleted' => '0',
+	// 			'a.id_credential' => '1'
+	// 		]
+	// 	];
+	// 	$result = $this->data->get($query)->result();
+	// 	echo json_encode($result);
+	// }
+	public function get_data_chart()
 	{
 		$query = [
 			'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.card_image, a.username, a.password, a.last_login, b.name as akses',
@@ -121,18 +149,68 @@ class Dashboard_mitra extends CI_Controller
 		$result = $this->data->get($query)->result();
 		echo json_encode($result);
 	}
-	public function get_data_chart()
+
+	public function chart_sewa_bulanan($id_mitra, $tahun)
 	{
+		if (!$id_mitra) {
+			$where = array('email' => $this->session->userdata('email'));
+			$data['user'] = $this->data->find('st_user', $where)->row_array();
+			$id_mitra = $data['user']['id'];
+		}
+		$query = $this->db->query("
+        SELECT 
+            YEAR(tgl_transaksi) AS tahun,
+            MONTH(tgl_transaksi) AS bulan,
+            COUNT(id) AS jumlah_transaksi_per_bulan
+        FROM transaksi
+        WHERE status >= 4
+        AND id_mitra = $id_mitra
+        AND YEAR(tgl_transaksi) = $tahun
+        GROUP BY YEAR(tgl_transaksi), MONTH(tgl_transaksi)
+        ORDER BY MONTH(tgl_transaksi)
+    ");
+
+		$result = $query->result();
+
+		$data = [];
+		foreach ($result as $value) {
+			$monthName = $this->getMonth($value->bulan);
+			$data[$monthName] = $value->jumlah_transaksi_per_bulan;
+		}
+
+		return $data;
+	}
+
+	public function get_chart_data($id_mitra, $tahun)
+	{
+		$result = $this->chart_sewa_bulanan($id_mitra, $tahun);
+		echo json_encode($result);
+	}
+
+	private function getMonth($monthNum)
+	{
+		$dateObj   = DateTime::createFromFormat('!m', $monthNum);
+		return $dateObj->format('F');
+	}
+
+	public function get_data()
+	{
+		$where = array('email' => $this->session->userdata('email'));
+		$data['user'] = $this->data->find('st_user', $where)->row_array();
 		$query = [
-			'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.card_image, a.username, a.password, a.last_login, b.name as akses',
-			'from' => 'st_user a',
+			'select' => 'p.id, p.nama_produk, k.name, SUM(dt.jumlah) AS total_dipinjam',
+			'from' => 'product p',
 			'join' => [
-				'app_credential b, b.id = a.id_credential'
+				'detail_transaksi dt, p.id = dt.id_produk',
+				'category k, p.id_category = k.id'
 			],
 			'where' => [
-				'a.is_deleted' => '0',
-				'a.id_credential' => '1'
-			]
+				'p.is_deleted' => 0,
+				'p.id_mitra' => $data['user']['id'],
+			],
+			'group_by' => 'p.id, p.nama_produk',
+			'order_by' => 'total_dipinjam DESC',
+			'limit' => 5
 		];
 		$result = $this->data->get($query)->result();
 		echo json_encode($result);

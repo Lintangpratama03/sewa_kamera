@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/bootstrap/css/bootstrap.min.css') ?>">
     <style>
         body {
-            background-image: url('<?= base_url('assets/image/back.jpg') ?>');
+            /* background-image: url('<?= base_url('assets/image/back.jpg') ?>'); */
             background-size: cover;
         }
 

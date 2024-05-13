@@ -336,24 +336,34 @@ $(document).ready(function() {
             dataType: "json",
             success: function(response) {
                 if (response.success && response.id_d_array) {
-                    // Update the product table
-                    update_product(response.id_d_array);
                     var telat = parseFloat($('#telat').val()) || 0;
                     var denda = parseFloat($('#denda').val()) || 0;
                     var total = parseFloat($('#total').val()) || 0;
+                    update_product(response.id_d_array);
                     update_denda(id_transaksi, telat, denda, total);
                     update_detail_transaksi(response.id_d_array, $("[name='keterangan']").val());
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
-                        text: 'Data has been updated successfully.'
+                        text: 'Berhasil Update Denda dan Update Stok.'
                     }).then(() => {
                         $("#exampleModal").modal("hide");
                         window.location.href = base_url + 'manage-kembali';
                     });
 
                 } else {
-                    console.error("Error retrieving id_d values.");
+                    var telat = parseFloat($('#telat').val()) || 0;
+                    var denda = parseFloat($('#denda').val()) || 0;
+                    var total = parseFloat($('#total').val()) || 0;
+                    update_denda(id_transaksi, telat, denda, total);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Berhasil Update Denda.'
+                    }).then(() => {
+                        $("#exampleModal").modal("hide");
+                        window.location.href = base_url + 'manage-kembali';
+                    });
                 }
             },
             error: function(xhr, status, error) {

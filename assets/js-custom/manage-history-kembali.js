@@ -110,7 +110,7 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "5") {
+                            if (data == "selesai") {
                                 return (
                                     '<a href="' + base_url + 'history-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
                                 );                                

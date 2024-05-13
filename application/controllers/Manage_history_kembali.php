@@ -88,7 +88,7 @@ class Manage_history_kembali extends CI_Controller
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'a.status' => 5,
+                'a.status' => 'selesai',
                 'a.id_mitra' => $data['user']['id'],
             ]
         ];

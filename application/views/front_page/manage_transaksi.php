@@ -25,9 +25,9 @@
                             <select class="form-control status" id="status">
                                 <option value="">Semua Status</option>
                                 <option>Belum dicek</option>
+                                <option>Terverifikasi</option>
                                 <option>Proses Bayar</option>
-                                <option>Sudah Bayar</option>
-                                <option>Sudah Diambil</option>
+                                <option>Terbayar</option>
                             </select>
                         </div>
                     </div>

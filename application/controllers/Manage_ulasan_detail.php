@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Manage_ulasan_detail extends CI_Controller
 {
-    var $module_js = ['manage-ulasan'];
+    var $module_js = ['manage-ulasan-detail'];
     var $app_data = [];
 
     public function __construct()
@@ -25,8 +25,9 @@ class Manage_ulasan_detail extends CI_Controller
         $this->app_data['module_js'] = $this->module_js;
     }
 
-    public function index()
+    public function index($id)
     {
+        $this->app_data['id'] = $id;
         $query_menu = [
             'select' => 'id_parent,name, icon, link, type, is_admin',
             'from' => 'app_menu',
@@ -71,31 +72,30 @@ class Manage_ulasan_detail extends CI_Controller
         $this->app_data['title'] = 'Kelola Ulasan';
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
-        $this->load->view('front_page/manage_ulasan');
+        $this->load->view('front_page/manage_ulasan_detail');
         $this->load->view('template-mitra/footer');
         $this->load->view('template-mitra/end');
         $this->load->view('js-custom', $this->app_data);
     }
-    public function get_data()
+    public function get_data($id)
     {
         $query = "SELECT
-                    p.id AS id,
                     p.nama_produk AS 'nama_produk',
-                    p.type AS 'type',
                     c.name AS 'kategori',
-                    COUNT(r.rating) AS total_ratings,
-                    AVG(r.rating) AS average_rating
+                    r.rating AS 'rating',
+                    r.deskripsi AS 'deskripsi',
+                    u.name AS 'nama_user',
+                    p.type AS 'type'
                 FROM
                     product p
                 LEFT JOIN
+                    category c ON p.id_category = c.id
+                LEFT JOIN
                     rating r ON p.id = r.id_produk
                 LEFT JOIN
-                    category c ON p.`id_category` = c.id
-                WHERE
-                    p.is_deleted = 0
-                    AND r.is_deleted = 0
-                GROUP BY
-                    p.id, p.nama_produk
+                    st_user u ON r.id_user = u.id    
+                WHERE 
+                    r.id_produk = $id 
                 ";
         $result = $this->db->query($query)->result();
         echo json_encode($result);

@@ -43,10 +43,10 @@
                     <thead class="table-light">
                         <tr>
                             <th width="5%">No</th>
+                            <th width="10%">Nama Pelanggan</th>
                             <th width="10%">Tgl Booking</th>
                             <th width="10%">Tenggat Kembali</th>
-                            <th width="10%">Nama Pelanggan</th>
-                            <th width="10%">Keterangan</th>
+                            <th width="10%">Total Harga Sewa</th>
                             <th width="10%">Status</th>
                             <th width="10%">Aksi</th>
                         </tr>

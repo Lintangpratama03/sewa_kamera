@@ -80,19 +80,13 @@ class manage_history_transaksi extends CI_Controller
     {
         $where = array('email' => $this->session->userdata('email'));
         $data['user'] = $this->data->find('st_user', $where)->row_array();
-        $query = [
-            'select' => 'DATE(a.tgl_booking) as tgl_booking_date,DATE(a.tgl_tenggat) as tgl_tenggat_date, a.*, c.name',
-            'from' => 'transaksi a',
-            'join' => [
-                'st_user c, c.id = a.id_user',
-            ],
-            'where' => [
-                'a.is_deleted' => 0,
-                'a.status >=' => 4,
-                'a.id_mitra' => $data['user']['id'],
-            ]
-        ];
-        $result = $this->data->get($query)->result();
+        $query = "SELECT DATE(a.tgl_booking) AS tgl_booking_date, CONCAT('Rp.', FORMAT(a.total_harga, 0)) AS total_harga_1,DATE(a.tgl_tenggat) AS tgl_tenggat_date, a.*, c.name 
+                FROM transaksi a 
+                JOIN st_user c ON c.id = a.id_user 
+                WHERE a.is_deleted = 0 
+                AND (a.status = 'lunas' OR a.status = 'dipinjam' OR a.status = 'selesai') 
+                AND a.id_mitra = " . $data['user']['id'];
+        $result = $this->db->query($query)->result();
         echo json_encode($result);
     }
 

@@ -95,10 +95,10 @@ function get_data() {
                             return meta.row + 1;
                         },
                     },
-                    { data: "name" },
-                    { data: "tgl_booking_date" },
-                    {data: "tgl_terima_date"},                                              
-                    {data: "tgl_selesai_date"},                                              
+                    { data: "name",className: "text-center" },
+                    { data: "tgl_booking_date",className: "text-center" },
+                    {data: "tgl_terima_date",className: "text-center"},                                              
+                    {data: "tgl_selesai_date",className: "text-center"},                                              
                     {
                         data: "status",
                         className: "text-center",

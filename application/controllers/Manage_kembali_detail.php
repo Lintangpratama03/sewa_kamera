@@ -293,12 +293,14 @@ class manage_kembali_detail extends CI_Controller
             'total' => $total
         );
 
+        $timestamp = $this->db->query("SELECT NOW() as timestamp")->row()->timestamp;
         if ($denda_record) {
             $updated = $this->data->update('detail_denda', $where, $data);
             if ($updated) {
                 $response['success'] = true;
                 $data1 = array(
-                    'status' => 5
+                    'status' => 'selesai',
+                    'tgl_selesai' => $timestamp,
                 );
                 $where1 = array('id' => $id_transaksi);
                 $this->data->update('transaksi', $where1, $data1);
@@ -311,7 +313,8 @@ class manage_kembali_detail extends CI_Controller
             if ($inserted) {
                 $response['success'] = true;
                 $data1 = array(
-                    'status' => 5
+                    'status' => 'selesai',
+                    'tgl_selesai' => $timestamp,
                 );
                 $where1 = array('id' => $id_transaksi);
                 $this->data->update('transaksi', $where1, $data1);

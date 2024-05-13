@@ -94,10 +94,10 @@ function get_data() {
                             return meta.row + 1;
                         },
                     },
-                    { data: "tgl_booking_date" },
-                    { data: "tgl_tenggat_date" },
-                    { data: "name" },
-                    { data: "keterangan" },
+                    { data: "name", className: "text-center" },
+                    { data: "tgl_booking_date",className: "text-center" },
+                    { data: "tgl_tenggat_date",className: "text-center" },
+                    { data: "total_harga_1", className: "text-center" },
                     {
                         data: "status",
                         className: "text-center",

@@ -146,7 +146,7 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "4") {
+                            if (data == "dipinjam") {
                                 return (
                                     '<a href="' + base_url + 'manage-kembali/' + row.id + '" class="btn btn-info" title="detail"><i class="fa-solid fa-eye"></i></a>'
                                 );                                

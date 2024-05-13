@@ -88,7 +88,7 @@ class manage_kembali extends CI_Controller
             ],
             'where' => [
                 'a.is_deleted' => 0,
-                'a.status' => 4,
+                'a.status' => 'dipinjam',
                 'a.id_mitra' => $data['user']['id'],
             ]
         ];

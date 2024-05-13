@@ -89,6 +89,7 @@ class manage_ulasan extends CI_Controller
                 'a.is_deleted' => 0,
             ]
         ];
+        // dd($query);
         $result = $this->data->get($query)->result();
         echo json_encode($result);
     }

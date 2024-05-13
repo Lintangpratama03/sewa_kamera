@@ -98,19 +98,21 @@ function get_data() {
                             return meta.row + 1;
                         },
                     },
-                    { data: "tgl_booking_date" },
-                    { data: "name" },
-                    { data: "keterangan" },
+                    { data: "tgl_booking_date",className: "text-center" },
+                    { data: "name",className: "text-center" },
+                    { data: "tgl_pinjam",className: "text-center" },
                     {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "1") {
-                                return '<button type="button" class="btn btn-block btn-danger">Belum dicek</button>';
-                            } else if (data == "2") {
-                                return '<button type="button" class="btn btn-block btn-warning">Proses Bayar</button>';
-                            } else if (data == "3") {
-                                return '<button type="button" class="btn btn-block btn-success">Sudah Bayar</button>';
+                            if (data == "booking") {
+                                return '<button type="button" class="btn btn-block bg-gradient-danger btn-xs">Belum dicek</button>';
+                            } else if (data == "terverifikasi") {
+                                return '<button type="button" class="btn btn-block bg-gradient-warning btn-xs">Terverifikasi</button>';
+                            } else if (data == "bayar") {
+                                return '<button type="button" class="btn btn-block bg-gradient-info btn-xs">Proses Bayar</button>';
+                            } else if (data == "lunas") {
+                                return '<button type="button" class="btn btn-block bg-gradient-success btn-xs">Terbayar</button>';
                             }
                         },
                     },
@@ -118,24 +120,33 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "1") {
+                            if (data == "booking") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
-                            } else if (data == "2") {
+                            } else if (data == "terverifikasi") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
-                            } else if (data == "3") {
+                            } else if (data == "bayar") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>' +
-                                    ' <button class="btn btn-success" data-toggle="modal" data-target="#detailBayar" title="balas" onclick="submit(' +
+                                    ' <button class="btn btn-warning" data-toggle="modal" data-target="#detailBayar" title="detail-bayar" onclick="submit(' +
+									row.id +
+									')"><i class="fa-solid fa-shopping-cart"></i></button>'
+                                );
+                            } else if (data == "lunas") {
+                                return (
+                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
+                                    row.id +
+                                    ')"><i class="fa-solid fa-eye"></i></button>' +
+                                    ' <button class="btn btn-warning" data-toggle="modal" data-target="#detailBayar" title="detail-bayar" onclick="submit(' +
 									row.id +
 									')"><i class="fa-solid fa-shopping-cart"></i></button>'
                                 );
@@ -198,11 +209,43 @@ function submit(x) {
                 detailTable.clear().rows.add(hasil).draw();
             }
 
-            if (hasil[0].status === "1") {
+            $.ajax({
+                type: "POST",
+                data: "id=" + x,
+                url: base_url + _controller + "/get_detail_bayar",
+                dataType: "json",
+                success: function (detail_bayar) {
+                    if (!$.fn.DataTable.isDataTable('#detailTable2')) {
+                        detailTable = $('#detailTable2').DataTable({
+                            destroy: true,
+                            data: detail_bayar,
+                            columns: [
+                                { data: 'status_bayar' },
+                                { data: 'va_number' },
+                                { data: 'tanggal_expire' },
+                            ],
+                            initComplete: function () {
+                                $("th").css("text-align", "center");
+                            },
+                        });
+                    } else {
+                        detailTable.clear().rows.add(detail_bayar).draw();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX Error: " + error);
+                }
+            });
+
+            if (hasil[0].status === "booking") {
                 $('#btn-ubah').show();
-			} else if (hasil[0].status === "3") {
+			} else if (hasil[0].status === "lunas") {
                 $('#btn-ubah').hide();
                 $('#btn-tolak').hide();
+			} else if (hasil[0].status === "bayar") {
+                $('#btn-ubah').hide();
+                $('#btn-tolak').hide();
+                $('#btn-ambil').hide();
             } else{
                 $('#btn-ubah').hide();
 			}
@@ -240,6 +283,7 @@ function terima_data() {
         },
     });
 }
+
 function tolak_data() {
     var formData = new FormData();
     formData.append("id", $("[name='id']").val());
@@ -259,6 +303,35 @@ function tolak_data() {
                 }
             } else if (response.success) {
                 $("#detailPesan").modal("hide");
+                $("body").append(response.success);
+                get_data();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error: " + error);
+        },
+    });
+}
+
+function ambil_data() {
+    var formData = new FormData();
+    formData.append("id", $("[name='id']").val());
+    $.ajax({
+        type: "POST",
+        url: base_url + _controller + "/ambil_data",
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            delete_error();
+            if (response.errors) {
+                for (var fieldName in response.errors) {
+                    $("#error-" + fieldName).show();
+                    $("#error-" + fieldName).html(response.errors[fieldName]);
+                }
+            } else if (response.success) {
+                $("#detailBayar").modal("hide");
                 $("body").append(response.success);
                 get_data();
             }

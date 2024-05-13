@@ -57,7 +57,7 @@
                             <th width="5%">No</th>
                             <th width="10%">Tgl Booking</th>
                             <th width="10%">Nama Pelanggan</th>
-                            <th width="10%">Keterangan</th>
+                            <th width="10%">Tanggal Pinjam</th>
                             <th width="10%">Status</th>
                             <th width="10%">Aksi</th>
                         </tr>
@@ -121,34 +121,18 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Data Bayar</h4>
+                        <h4 class="modal-title">Detail Data Bayar</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <label for="judul1">Detail Penyewa</label>
-                        <div class="row mb-1">
-                            <label for="nama" class="col-sm-2 col-form-label">Nama</label>
-                            <div class="col-sm-6">
-                                <input type="hidden" class="form-control" id="id" name="id">
-                                <input type="text" class="form-control" id="nama" name="nama" readonly>
-                                <small class="text-danger pl-1" id="error-nama"></small>
-                            </div>
-                        </div>
-                        <div class="row mb-1">
-                            <label for="image" class="col-sm-2 col-form-label">Foto</label>
-                            <div class="col-sm-6">
-                                <div id="imagePreview"></div><br>
-                            </div>
-                        </div>
-                        <label for="judul1">Detail Bayar</label>
-                        <table id="detailTable" class="table table-hover table-bordered" style="width:100%">
+                        <table id="detailTable2" class="table table-hover table-bordered" style="width:100%">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="10%">Tgl Booking</th>
-                                    <th width="10%">Nama Produk</th>
-                                    <th width="10%">Foto</th>
+                                    <th width="10%">Status Bayar</th>
+                                    <th width="10%">VA Number</th>
+                                    <th width="10%">Tgl Expired</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -157,10 +141,7 @@
                     </div>
                     <div class="modal-footer d-flex justify-content-start">
                         <div class="col-lg-2">
-                            <button type="button" id="btn-tolak" onclick="tolak_data()" class="btn btn-outline-danger btn-block">Tolak</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-ubah" onclick="terima_data()" class="btn btn-outline-success btn-block">Konfirmasi</button>
+                            <button type="button" id="btn-ambil" onclick="ambil_data()" class="btn btn-outline-success btn-block">Sudah Ambil</button>
                         </div>
                     </div>
                 </div>

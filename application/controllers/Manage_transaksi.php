@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_transaksi extends CI_Controller
+class Manage_transaksi extends CI_Controller
 {
     var $module_js = ['manage-transaksi'];
     var $app_data = [];

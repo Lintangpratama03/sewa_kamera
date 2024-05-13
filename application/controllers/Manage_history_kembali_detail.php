@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_history_kembali_detail extends CI_Controller
+class Manage_history_kembali_detail extends CI_Controller
 {
     var $module_js = ['manage-history-kembali-detail'];
     var $app_data = [];

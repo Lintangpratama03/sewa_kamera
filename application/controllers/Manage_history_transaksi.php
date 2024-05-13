@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_history_transaksi extends CI_Controller
+class Manage_history_transaksi extends CI_Controller
 {
     var $module_js = ['manage-history-transaksi'];
     var $app_data = [];

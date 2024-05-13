@@ -104,16 +104,46 @@ class Dashboard_mitra extends CI_Controller
 		$produk_hilang_result = $this->db->query($produk_hilang, array($id))->row();
 		$this->app_data['produk_hilang'] = $produk_hilang_result->total_stok;
 
-
+		$tahun = date('Y');
 		$jumlah_sewa_perbulan = "SELECT COUNT(transaksi.id) AS jumlah
 								FROM transaksi
-								WHERE transaksi.status >= '4' 			
-								AND transaksi.id_mitra = $id";
+								WHERE (status = 'selesai' OR status = 'dipinjam' OR status = 'lunas')
+								AND id_mitra = $id
+								AND YEAR(tgl_transaksi) = $tahun";
 		$jumlah_sewa_perbulan_result = $this->db->query($jumlah_sewa_perbulan, array($id))->row();
 		$this->app_data['jumlah_sewa'] = $jumlah_sewa_perbulan_result->jumlah;
 
 
-		$tahun = date('Y');
+		$pendapatan_bulan_kemarin = "SELECT FORMAT(SUM(total_harga), 0) AS total_bulan_kemarin
+								FROM transaksi
+								WHERE MONTH(tgl_transaksi) = MONTH(CURRENT_DATE() - INTERVAL 1 MONTH)
+								AND YEAR(tgl_transaksi) = YEAR(CURRENT_DATE() - INTERVAL 1 MONTH)
+								AND transaksi.id_mitra = $id";
+		$pendapatan_bulan_kemarin_result = $this->db->query($pendapatan_bulan_kemarin, array($id))->row();
+		$this->app_data['pendapatan_bulan_kemarin'] = $pendapatan_bulan_kemarin_result->total_bulan_kemarin;
+
+		$pendapatan_bulan_ini = "SELECT FORMAT(SUM(total_harga), 0) AS total_bulan_ini
+								FROM transaksi
+								WHERE MONTH(tgl_transaksi) = MONTH(CURRENT_DATE())
+								AND YEAR(tgl_transaksi) = YEAR(CURRENT_DATE())
+								AND transaksi.id_mitra = $id";
+		$pendapatan_bulan_ini_result = $this->db->query($pendapatan_bulan_ini, array($id))->row();
+		$this->app_data['pendapatan_bulan_ini'] = $pendapatan_bulan_ini_result->total_bulan_ini;
+
+		$pendapatan_tahun_ini = "SELECT FORMAT(SUM(total_harga), 0) AS total_tahun_ini
+								FROM transaksi
+								WHERE YEAR(tgl_transaksi) = YEAR(CURRENT_DATE())
+								AND transaksi.id_mitra = $id";
+		$pendapatan_tahun_ini_result = $this->db->query($pendapatan_tahun_ini, array($id))->row();
+		$this->app_data['pendapatan_tahun_ini'] = $pendapatan_tahun_ini_result->total_tahun_ini;
+
+		$pendapatan_all = "SELECT FORMAT(SUM(total_harga), 0) AS total_all
+								FROM transaksi
+								WHERE transaksi.id_mitra = $id";
+		$pendapatan_all_result = $this->db->query($pendapatan_all, array($id))->row();
+		$this->app_data['pendapatan_all'] = $pendapatan_all_result->total_all;
+
+
 		$data_chart = $this->chart_sewa_bulanan($id, $tahun);
 		$this->app_data['chartData'] = $data_chart;
 
@@ -166,16 +196,16 @@ class Dashboard_mitra extends CI_Controller
 			$id_mitra = $data['user']['id'];
 		}
 		$query = $this->db->query("
-			SELECT 
+				SELECT 
 				YEAR(tgl_transaksi) AS tahun,
 				MONTH(tgl_transaksi) AS bulan,
 				COUNT(id) AS jumlah_transaksi_per_bulan
 			FROM transaksi
-			WHERE status >= 4
+			WHERE (status = 'selesai' OR status = 'dipinjam' OR status = 'lunas')
 			AND id_mitra = $id_mitra
 			AND YEAR(tgl_transaksi) = $tahun
 			GROUP BY YEAR(tgl_transaksi), MONTH(tgl_transaksi)
-			ORDER BY MONTH(tgl_transaksi)
+			ORDER BY MONTH(tgl_transaksi);
 			");
 
 		$result = $query->result();

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class manage_ulasan extends CI_Controller
+class Manage_ulasan extends CI_Controller
 {
     var $module_js = ['manage-ulasan'];
     var $app_data = [];
@@ -78,125 +78,26 @@ class manage_ulasan extends CI_Controller
     }
     public function get_data()
     {
-        $query = [
-            'select' => 'a.*, b.id, c.nama_produk',
-            'from' => 'message_ulasan a',
-            'join' => [
-                'transaksi b, b.id = a.id_transaksi',
-                'product c, b.id_produk = c.id'
-            ],
-            'where' => [
-                'a.is_deleted' => 0,
-            ]
-        ];
-        // dd($query);
-        $result = $this->data->get($query)->result();
+        $query = "SELECT
+                    p.id AS id,
+                    p.nama_produk AS 'nama_produk',
+                    p.type AS 'type',
+                    c.name AS 'kategori',
+                    COUNT(r.rating) AS total_ratings,
+                    AVG(r.rating) AS average_rating
+                FROM
+                    product p
+                LEFT JOIN
+                    rating r ON p.id = r.id_produk
+                LEFT JOIN
+                    category c ON p.`id_category` = c.id
+                WHERE
+                    p.is_deleted = 0
+                    AND r.is_deleted = 0
+                GROUP BY
+                    p.id, p.nama_produk
+                ";
+        $result = $this->db->query($query)->result();
         echo json_encode($result);
-    }
-
-    public function cek_ulasan()
-    {
-        $id = $this->input->post('id');
-
-        $data = array(
-            'status' => '2',
-        );
-        $where = array('id' => $id);
-
-        $updated = $this->data->update('message_ulasan', $where, $data);
-        if ($updated) {
-            $response['success'] = "<script>$(document).ready(function () {
-                var Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                  });
-
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Anda telah melakukan aksi ubah status Status sudah dibaca'
-                  })
-              });</script>";
-            echo json_encode($response);
-        }
-    }
-    public function get_data_id()
-    {
-        $id = $this->input->post('id');
-        $query = [
-            'select' => 'a.*, b.id, c.nama_produk',
-            'from' => 'message_ulasan a',
-            'join' => [
-                'transaksi b, b.id = a.id_transaksi',
-                'product c, b.id_produk = c.id'
-            ],
-            'where' => [
-                'a.id' => $id,
-            ]
-        ];
-        $result = $this->data->get($query)->result();
-        echo json_encode($result);
-    }
-
-    public function get_data_info()
-    {
-        $id = $this->input->post('id');
-        $query = [
-            'select' => 'a.id, a.name, a.email, a.rating, a.message, a.date_send, b.reply as reply_ulasan, c.name as admin, b.date_send as date_reply',
-            'from' => 'message_ulasan a',
-            'join' => [
-                'reply_ulasan b, b.id_ulasan = a.id',
-                'st_user c, b.reply_by = c.id'
-            ],
-            'where' => [
-                'a.id' => $id,
-            ]
-        ];
-        $result = $this->data->get($query)->result();
-        echo json_encode($result);
-    }
-
-    public function reply_ulasan()
-    {
-        $this->form_validation->set_rules('reply', 'Reply', 'required|trim');
-
-        if ($this->form_validation->run() == false) {
-            $response['errors'] = $this->form_validation->error_array();
-        } else {
-            $where = array('email' => $this->session->userdata('email'));
-            $data['user'] = $this->data->find('st_user', $where)->row_array();
-            $id = $this->input->post('id');
-            $reply = $this->input->post('reply');
-            $data = array(
-                'id_ulasan' => $id,
-                'reply' => $reply,
-                'reply_by' => $data['user']['id'],
-            );
-            $reply = $this->data->insert('reply_ulasan', $data);
-
-            if ($reply) {
-                $data = array(
-                    'status' => '3',
-                );
-                $where = array('id' => $id);
-                $this->data->update('message_ulasan', $where, $data);
-
-                $response['success'] = "<script>$(document).ready(function () {
-                    var Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 2000,
-                      });
-    
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Anda telah melakukan aksi balas pesan Pesan berhasil dibalas'
-                      })
-                  });</script>";
-            }
-        }
-        echo json_encode($response);
     }
 }

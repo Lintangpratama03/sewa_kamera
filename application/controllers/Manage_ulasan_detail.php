@@ -1,9 +1,9 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Manage_history_kembali extends CI_Controller
+class Manage_ulasan_detail extends CI_Controller
 {
-    var $module_js = ['manage-history-kembali'];
+    var $module_js = ['manage-ulasan'];
     var $app_data = [];
 
     public function __construct()
@@ -68,52 +68,36 @@ class Manage_history_kembali extends CI_Controller
         $this->app_data['get_dropdown'] = $this->data->get($query_dropdown)->result();
         $this->app_data['get_child'] = $this->data->get($query_child)->result();
         $this->app_data['user'] = $this->data->get($user)->row_array();
-        $this->app_data['title'] = 'Kelola transaksi';
+        $this->app_data['title'] = 'Kelola Ulasan';
         $this->load->view('template-mitra/start', $this->app_data);
         $this->load->view('template-mitra/header', $this->app_data);
-        $this->load->view('front_page/manage_history_kembali');
+        $this->load->view('front_page/manage_ulasan');
         $this->load->view('template-mitra/footer');
         $this->load->view('template-mitra/end');
         $this->load->view('js-custom', $this->app_data);
     }
     public function get_data()
     {
-        $where = array('email' => $this->session->userdata('email'));
-        $data['user'] = $this->data->find('st_user', $where)->row_array();
-        $query = [
-            'select' => 'DATE(a.tgl_terima) as tgl_terima_date,DATE(a.tgl_selesai) as tgl_selesai_date, DATE(a.tgl_booking) as tgl_booking_date,DATE(a.tgl_tenggat) as tgl_tenggat_date, a.*, c.name',
-            'from' => 'transaksi a',
-            'join' => [
-                'st_user c, c.id = a.id_user',
-            ],
-            'where' => [
-                'a.is_deleted' => 0,
-                'a.status' => 5,
-                'a.id_mitra' => $data['user']['id'],
-            ]
-        ];
-        $result = $this->data->get($query)->result();
-        echo json_encode($result);
-    }
-
-    public function get_data_id()
-    {
-        $id = $this->input->post('id');
-        $query = [
-            'select' => 'DATE(a.tgl_booking) as tgl_booking_date, a.*, b.nama_produk, c.name, c.image, b.image as image_produk',
-            'from' => 'transaksi a',
-            'join' => [
-                'st_user c, c.id = a.id_user',
-                'detail_transaksi d, d.id_transaksi = a.id',
-                'product b, b.id = d.id_produk',
-
-            ],
-            'where' => [
-                'a.is_deleted' => 0,
-                'a.id' => $id,
-            ]
-        ];
-        $result = $this->data->get($query)->result();
+        $query = "SELECT
+                    p.id AS id,
+                    p.nama_produk AS 'nama_produk',
+                    p.type AS 'type',
+                    c.name AS 'kategori',
+                    COUNT(r.rating) AS total_ratings,
+                    AVG(r.rating) AS average_rating
+                FROM
+                    product p
+                LEFT JOIN
+                    rating r ON p.id = r.id_produk
+                LEFT JOIN
+                    category c ON p.`id_category` = c.id
+                WHERE
+                    p.is_deleted = 0
+                    AND r.is_deleted = 0
+                GROUP BY
+                    p.id, p.nama_produk
+                ";
+        $result = $this->db->query($query)->result();
         echo json_encode($result);
     }
 }

@@ -86,6 +86,7 @@ $route['history-kembali'] = 'Manage_history_kembali';
 $route['manage-kembali/(:num)'] = 'Manage_kembali_detail/index/$1';
 $route['history-kembali/(:num)'] = 'Manage_history_kembali_detail/index/$1';
 
+$route['manage-ulasan-detail/(:num)'] = 'Manage_ulasan_detail/index/$1';
 
 
 // api

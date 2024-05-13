@@ -52,7 +52,7 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-warning">
                         <div class="inner">
-                            <p>Total Kamera</p>
+                            <p>Total Jenis Kamera</p>
                             <h3>
                                 <?= $total_produk; ?> Kamera
                             </h3>
@@ -66,9 +66,9 @@
                 <div class="col-lg-3 col-6">
                     <div class="small-box bg-info">
                         <div class="inner">
-                            <p>Total Jenis Kamera</p>
+                            <p>Total Kamera Tidak Kembali</p>
                             <h3>
-                                <?= $jumlah_kategori; ?> Jenis
+                                <?= $produk_hilang; ?> Kamera
                             </h3>
 
                         </div>

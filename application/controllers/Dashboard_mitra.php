@@ -95,7 +95,15 @@ class Dashboard_mitra extends CI_Controller
 		$this->app_data['produk_pinjam'] = $produk_pinjam_result->total_stok;
 
 		$this->app_data['total_produk'] = $this->data->count_wheree('product', 'is_deleted', '0', 'id_mitra', $id);
-		$this->app_data['jumlah_kategori'] = $this->data->count_where('category', 'is_deleted', '0');
+
+		$produk_hilang = "SELECT SUM(detail_transaksi.jumlah) AS total_stok
+								FROM detail_transaksi
+								LEFT JOIN product ON detail_transaksi.id_produk = product.id
+								WHERE detail_transaksi.STATUS = '2'		
+								AND product.id_mitra = $id";
+		$produk_hilang_result = $this->db->query($produk_hilang, array($id))->row();
+		$this->app_data['produk_hilang'] = $produk_hilang_result->total_stok;
+
 
 		$jumlah_sewa_perbulan = "SELECT COUNT(transaksi.id) AS jumlah
 								FROM transaksi
@@ -158,17 +166,17 @@ class Dashboard_mitra extends CI_Controller
 			$id_mitra = $data['user']['id'];
 		}
 		$query = $this->db->query("
-        SELECT 
-            YEAR(tgl_transaksi) AS tahun,
-            MONTH(tgl_transaksi) AS bulan,
-            COUNT(id) AS jumlah_transaksi_per_bulan
-        FROM transaksi
-        WHERE status >= 4
-        AND id_mitra = $id_mitra
-        AND YEAR(tgl_transaksi) = $tahun
-        GROUP BY YEAR(tgl_transaksi), MONTH(tgl_transaksi)
-        ORDER BY MONTH(tgl_transaksi)
-    ");
+			SELECT 
+				YEAR(tgl_transaksi) AS tahun,
+				MONTH(tgl_transaksi) AS bulan,
+				COUNT(id) AS jumlah_transaksi_per_bulan
+			FROM transaksi
+			WHERE status >= 4
+			AND id_mitra = $id_mitra
+			AND YEAR(tgl_transaksi) = $tahun
+			GROUP BY YEAR(tgl_transaksi), MONTH(tgl_transaksi)
+			ORDER BY MONTH(tgl_transaksi)
+			");
 
 		$result = $query->result();
 

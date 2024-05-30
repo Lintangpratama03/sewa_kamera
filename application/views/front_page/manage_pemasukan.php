@@ -18,6 +18,16 @@
         <div class="card">
             <h5 class="card-header">Pemasukan Setiap Bulan</h5>
             <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <select class="form-control" id="yearFilter">
+                            <option value="">Pilih Tahun</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary" id="filterBtn">Filter</button>
+                    </div>
+                </div>
                 <table id="example" class="table table-hover table-bordered" style="width:100%">
                     <thead class="table-light">
                         <tr>

@@ -88,6 +88,8 @@ $route['history-kembali/(:num)'] = 'Manage_history_kembali_detail/index/$1';
 
 $route['manage-ulasan-detail/(:num)'] = 'Manage_ulasan_detail/index/$1';
 
+$route['manage-pemasukan'] = 'Manage_pemasukan';
+$route['manage-pemasukan-detail/(:num)/(:num)'] = 'Manage_pemasukan_detail/index/$1/$2';
 
 // api
 $route['api/manage_product'] = 'api/Manage_product/index';

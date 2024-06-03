@@ -78,6 +78,9 @@ class Manage_ulasan extends CI_Controller
     }
     public function get_data()
     {
+        $where = array('email' => $this->session->userdata('email'));
+        $data['user'] = $this->data->find('st_user', $where)->row_array();
+        $id = $data['user']['id'];
         $query = "SELECT
                     p.id AS id,
                     p.nama_produk AS 'nama_produk',
@@ -94,6 +97,7 @@ class Manage_ulasan extends CI_Controller
                 WHERE
                     p.is_deleted = 0
                     AND r.is_deleted = 0
+                    AND p.id_mitra = $id
                 GROUP BY
                     p.id, p.nama_produk
                 ";

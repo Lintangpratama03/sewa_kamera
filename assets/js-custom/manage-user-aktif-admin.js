@@ -1,5 +1,8 @@
 get_data();
-
+function showModal(imageUrl) {
+    $('#imageModal').modal('show');
+    $('#modalImage').attr('src', imageUrl);
+}
 $(function () {
 	bsCustomFileInput.init();
 });
@@ -134,7 +137,9 @@ function get_data() {
 							return (
 								'<img src="' +
 								imageUrl +
-								'" style="max-width: 100px; max-height: 400px;">'
+								'" style="max-width: 100px; max-height: 400px; cursor: pointer;" onclick="showModal(\'' +
+								imageUrl +
+								'\')">'
 							);
 						},
 					},

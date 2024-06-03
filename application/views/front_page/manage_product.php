@@ -114,7 +114,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Harga</label>
+                            <label>Harga Sewa</label>
                             <input type="text" name="harga" id="harga" class="form-control">
                             <small class="text-danger pl-3" id="error-harga"></small>
                         </div>

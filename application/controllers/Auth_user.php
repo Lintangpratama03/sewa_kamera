@@ -69,7 +69,7 @@ class Auth_user extends CI_Controller
                     }
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                 <strong>Pemberitahuan,  </strong>Akun Anda belum terverifikasi. Silakan verifikasi akun Anda.
+                 <strong>Pemberitahuan,  </strong>Akun Anda belum terverifikasi. Silakan Tunggu Verifikasi dari Admin.
                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                  </div>');
                     redirect('');

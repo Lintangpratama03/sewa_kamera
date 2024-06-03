@@ -311,7 +311,21 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Preview Gambar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" class="img-fluid" alt="Preview Gambar">
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     var base_url = '<?php echo base_url() ?>';
     var _controller = '<?= $this->router->fetch_class() ?>';

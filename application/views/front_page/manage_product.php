@@ -25,9 +25,10 @@
                         <tr>
                             <th width="5%">No</th>
                             <th width="20%">Nama Produk</th>
-                            <th width="20%">Type</th>
+                            <th width="10%">Type</th>
                             <th width="10%">Stok</th>
                             <th width="10%">Harga</th>
+                            <th width="10%">Status</th>
                             <th width="20%">Foto</th>
                             <th width="20%">Aksi</th>
                         </tr>

@@ -61,10 +61,14 @@ $route['dashboard'] = 'Dashboard_admin';
 $route['manage-pelanggan-daftar'] = 'Manage_user_admin';
 $route['manage-pelanggan-aktif'] = 'Manage_user_aktif_admin';
 $route['manage-kategori'] = 'Manage_category';
+$route['verifikasi-produk'] = 'Verifikasi_product';
 $route['manage-mitra-daftar'] = 'Manage_mitra_admin';
 $route['manage-mitra-aktif'] = 'Manage_mitra_aktif_admin';
 $route['admin'] = 'Admin';
 $route['logout'] = 'Admin/logout';
+$route['data-sewa'] = 'data-admin/Data_sewa';
+$route['manage-pemasukan'] = 'Manage_pemasukan';
+$route['manage-pemasukan-detail/(:num)/(:num)'] = 'Manage_pemasukan_detail/index/$1/$2';
 
 
 // mitra
@@ -88,10 +92,9 @@ $route['history-kembali/(:num)'] = 'Manage_history_kembali_detail/index/$1';
 
 $route['manage-ulasan-detail/(:num)'] = 'Manage_ulasan_detail/index/$1';
 
-$route['manage-pemasukan'] = 'Manage_pemasukan';
-$route['manage-pemasukan-detail/(:num)/(:num)'] = 'Manage_pemasukan_detail/index/$1/$2';
 
-$route['data-sewa'] = 'data-admin/Data_sewa';
+
+
 // api
 $route['api/manage_product'] = 'api/Manage_product/index';
 $route['api/manage_product/category'] = 'api/Manage_product/category';

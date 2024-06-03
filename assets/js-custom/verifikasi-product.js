@@ -1,5 +1,8 @@
 get_data();
-
+function showModal(imageUrl) {
+    $('#imageModal').modal('show');
+    $('#modalImage').attr('src', imageUrl);
+}
 $(function () {
 	bsCustomFileInput.init();
 });
@@ -74,10 +77,8 @@ function get_data() {
 							return meta.row + 1;
 						},
 					},
+					{ data: "name_mitra" },
 					{ data: "nama_produk" },
-					{ data: "type" },
-					{ data: "stok" },
-					{ data: "harga" },
 					{
                         data: "is_aktif",
                         className: "text-center",
@@ -100,7 +101,9 @@ function get_data() {
 							return (
 								'<img src="' +
 								imageUrl +
-								'" style="max-width: 100px; max-height: 400px;">'
+								'" style="max-width: 100px; max-height: 400px; cursor: pointer;" onclick="showModal(\'' +
+								imageUrl +
+								'\')">'
 							);
 						},
 					},
@@ -122,6 +125,12 @@ function get_data() {
 				initComplete: function () {
 					// Set column titles alignment to center
 					$("th").css("text-align", "center");
+		
+					// Filter event listener
+					$('#filterVerifikasi').on('change', function () {
+						var filterValue = $(this).val();
+						table.column(5).search(filterValue).draw();
+					});
 				},
 			});
 		},
@@ -132,13 +141,6 @@ function get_data() {
 }
 
 function submit(x) {
-	if (x == "tambah") {
-		$("#btn-tambah").show();
-		$("#btn-ubah").hide();
-	} else {
-		$("#btn-tambah").hide();
-		$("#btn-ubah").show();
-
 		$.ajax({
 			type: "POST",
 			data: "id=" + x,
@@ -151,105 +153,59 @@ function submit(x) {
                 $("[name='harga']").val(hasil[0].harga);
 				$("[name='type']").val(hasil[0].type);
                 $("[name='deskripsi']").val(hasil[0].deskripsi);
+                $("[name='keterangan']").val(hasil[0].ket_aktif);
 				$("#kategori").val(hasil[0].id_category).trigger("change");
                 $("[name='ket']").val(hasil[0].ket);
-                // $("input[name='paket[]']").prop("checked", false);
-				// var paketArray = hasil[0].paket.split(',');
-				// for (var i = 0; i < paketArray.length; i++) {
-				// 	$("input[name='paket[]'][value='" + paketArray[i] + "']").prop("checked", true);
-				// }
 				var nama = hasil[0].image;
 				imagePreview.innerHTML = `<br><img src="${base_url}assets/image/produk/${nama}" alt="Preview Image" class="img-thumbnail" style="width: 100px; height: auto;">`;
 			},
 		});
-	}
 	delete_form();
 	delete_error();
 }
 
-function insert_data() {
-	var formData = new FormData();
-    formData.append("judul", $("[name='judul']").val());
-	formData.append("deskripsi", $("[name='deskripsi']").val());
-    formData.append("type", $("[name='type']").val());
-	formData.append("stok", $("[name='stok']").val());
-	formData.append("harga", $("[name='harga']").val());
-    formData.append("kategori", $("#kategori").val());
-    // var paket = [];
-    // $.each($("input[name='paket[]']:checked"), function () {
-    //     paket.push($(this).val());
-    // });
-    // formData.append("paket", paket);
-
-	var imageInput = $("[name='image']")[0];
-	if (imageInput.files.length > 0) {
-		formData.append("image", imageInput.files[0]);
-	}
-
-	$.ajax({
-		type: "POST",
-		url: base_url + "/" + _controller + "/insert_data",
-		data: formData,
-		dataType: "json",
-		processData: false,
-		contentType: false,
-		success: function (response) {
-			delete_error();
-			if (response.errors) {
-				for (var fieldName in response.errors) {
-					$("#error-" + fieldName).show();
-					$("#error-" + fieldName).html(response.errors[fieldName]);
-				}
-			} else if (response.success) {
-				$("#exampleModal").modal("hide");
-				$("body").append(response.success);
-				get_data();
-			}
-		},
-		error: function (xhr, status, error) {
-			console.error("AJAX Error: " + error);
-		},
-	});
-}
-
 function edit_data() {
-	var formData = new FormData();
-	formData.append("id", $("[name='id']").val());
-	formData.append("judul", $("[name='judul']").val());
-	formData.append("deskripsi", $("[name='deskripsi']").val());
+    var formData = new FormData();
+    formData.append("id", $("[name='id']").val());
+    formData.append("judul", $("[name='judul']").val());
+    formData.append("deskripsi", $("[name='deskripsi']").val());
+    formData.append("keterangan", $("[name='keterangan']").val());
     formData.append("type", $("[name='type']").val());
-	formData.append("stok", $("[name='stok']").val());
-	formData.append("harga", $("[name='harga']").val());
+    formData.append("stok", $("[name='stok']").val());
+    formData.append("harga", $("[name='harga']").val());
     formData.append("kategori", $("#kategori").val());
-	var imageInput = $("[name='image']")[0];
-	if (imageInput.files.length > 0) {
-		formData.append("image", imageInput.files[0]);
-	}
+    var imageInput = $("[name='image']")[0];
+    if (imageInput.files.length > 0) {
+        formData.append("image", imageInput.files[0]);
+    }
 
-	$.ajax({
-		type: "POST",
-		url: base_url + _controller + "/edit_data",
-		data: formData,
-		dataType: "json",
-		processData: false,
-		contentType: false,
-		success: function (response) {
-			if (response.errors) {
-				delete_error();
-				for (var fieldName in response.errors) {
-					$("#error-" + fieldName).show();
-					$("#error-" + fieldName).html(response.errors[fieldName]);
-				}
-			} else if (response.success) {
-				$("#exampleModal").modal("hide");
-				$("body").append(response.success);
-				get_data();
-			}
-		},
-		error: function (xhr, status, error) {
-			console.error("AJAX Error: " + error);
-		},
-	});
+    var verifikasiValue = $("input[name='verifikasi']:checked").val();
+    formData.append("is_aktif", verifikasiValue);
+
+    $.ajax({
+        type: "POST",
+        url: base_url + _controller + "/edit_data",
+        data: formData,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (response.errors) {
+                delete_error();
+                for (var fieldName in response.errors) {
+                    $("#error-" + fieldName).show();
+                    $("#error-" + fieldName).html(response.errors[fieldName]);
+                }
+            } else if (response.success) {
+                $("#exampleModal").modal("hide");
+                $("body").append(response.success);
+                get_data();
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX Error: " + error);
+        },
+    });
 }
 
 function delete_data(x) {

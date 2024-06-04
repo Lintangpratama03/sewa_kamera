@@ -29,7 +29,7 @@ class Manage_all extends RestController
         if ($data) {
             if (!is_null($data->image)) {
                 $namaGambar = $data->image;
-                $gambarUrl = base_url('storage/user/' . $namaGambar);
+                $gambarUrl = base_url('assets/image/user/' . $namaGambar);
                 $data->image = $gambarUrl;
             }
 
@@ -57,7 +57,7 @@ class Manage_all extends RestController
         $modifiedData = [];
         foreach ($data as $produk) {
             $namaGambar = $produk->image;
-            $gambarUrl = base_url('storage/produk/' . $namaGambar);
+            $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
             $produk->gambar_url = $gambarUrl;
             $modifiedData[] = $produk;
         }
@@ -80,19 +80,19 @@ class Manage_all extends RestController
             $sumRatingBagi = $this->db->where('id_produk', $produk->id)->count_all_results('rating');
 
             $produk->rating = ($sumRatingBagi != 0) ? ($sumRating / $sumRatingBagi) : 0;
-            $produk->gambar_url = base_url('storage/produk/' . $namaGambar);
+            $produk->gambar_url = base_url('assets/image/produk/' . $namaGambar);
             $modifiedData[] = $produk;
         }
         $this->response($modifiedData, RestController::HTTP_OK);
     }
     public function get_category_get()
     {
-        $data = $this->db->select('id', 'name', 'image_category')->get('category')->result();
+        $data = $this->db->get('category')->result();
 
         $modifiedData = [];
         foreach ($data as $category) {
-            $namaGambar = $category->image_category;
-            $category->gambar_url = base_url('storage/category/' . $namaGambar);
+            $namaGambar = $category->image;
+            $category->gambar_url = base_url('assets/image/kategori/' . $namaGambar);
             $modifiedData[] = $category;
         }
         $this->response($modifiedData, RestController::HTTP_OK);
@@ -100,7 +100,7 @@ class Manage_all extends RestController
 
     public function get_detail_produk_get($id)
     {
-        $data = $this->db->select('p.id, p.id_mitra', 's.name as nama_mitra', 'c.name as id_category', 'p.nama_produk', 'p.image', 'p.type', 'p.harga', 'p.stok', 'p.deskripsi')
+        $data = $this->db->select('p.id, p.id_mitra, s.name as nama_mitra, c.name as id_category, p.nama_produk, p.image, p.type, p.harga, p.stok, p.deskripsi')
             ->from('product as p')
             ->join('category as c', 'c.id = p.id_category', 'left')
             ->join('st_user as s', 's.id = p.id_mitra', 'left')
@@ -111,7 +111,7 @@ class Manage_all extends RestController
         $modifiedData = [];
         foreach ($data as $produk) {
             $namaGambar = $produk->image;
-            $produk->gambar_url = base_url('storage/produk/' . $namaGambar);
+            $produk->gambar_url = base_url('assets/image/produk/' . $namaGambar);
             $sumRating = $this->db->select_sum('rating')->where('id_produk', $id)->get('rating')->row()->rating;
             $sumRatingBagi = $this->db->where('id_produk', $id)->count_all_results('rating');
 
@@ -170,7 +170,7 @@ class Manage_all extends RestController
         $modifiedData = [];
         foreach ($data as $produk) {
             $namaGambar = $produk->image;
-            $produk->gambar_url = base_url('storage/produk/' . $namaGambar);
+            $produk->gambar_url = base_url('assets/image/produk/' . $namaGambar);
             $modifiedData[] = $produk;
         }
 
@@ -200,7 +200,7 @@ class Manage_all extends RestController
                     "id" => $value->id,
                     "id_mitra" => $value->id_mitra,
                     "nama_mitra" => $value->nama_mitra,
-                    "image_mitra" => base_url('storage/user/' . $value->image_mitra),
+                    "image_mitra" => base_url('assets/image/user/' . $value->image_mitra),
                     "produk" => [
                         [
                             "id" => $value->id,
@@ -224,15 +224,15 @@ class Manage_all extends RestController
 
     public function get_mitra_get()
     {
-        $data = $this->db->select('id', 'name', 'image')
-            ->where('id_credential', 4)
+        $data = $this->db->select('id , name , image')
+            ->where('id_credential', 2)
             ->get('st_user')
             ->result();
 
         $modifiedData = [];
         foreach ($data as $mitra) {
             $namaGambar = $mitra->image;
-            $mitra->gambar_url = base_url('storage/user/' . $namaGambar);
+            $mitra->gambar_url = base_url('assets/image/user/' . $namaGambar);
             $modifiedData[] = $mitra;
         }
         $this->response($modifiedData, RestController::HTTP_OK);
@@ -324,7 +324,7 @@ class Manage_all extends RestController
             if ($detail) {
                 $detail->jumlah_all_produk = (int)$jumlah_all;
                 $namaGambar = $detail->image;
-                $gambarUrl = base_url('storage/produk/' . $namaGambar);
+                $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
 
                 $transactionsDetails[] = $detail;
@@ -365,7 +365,7 @@ class Manage_all extends RestController
             if ($detail) {
                 $detail->jumlah_all_produk = (int)$jumlah_all;
                 $namaGambar = $detail->image;
-                $gambarUrl = base_url('storage/produk/' . $namaGambar);
+                $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
 
                 $transactionsDetails[] = $detail;
@@ -404,7 +404,6 @@ class Manage_all extends RestController
             'json' => $request_body
         ]);
 
-        // Mengembalikan respons dari API
         return [
             'body' => $response->getBody(),
             'http_code' => $response->getStatusCode(),
@@ -558,7 +557,7 @@ class Manage_all extends RestController
     private function upload_base64($base64, $path)
     {
         $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64));
-        $upload_path = FCPATH . 'storage/' . $path;
+        $upload_path = FCPATH . 'assets/image/' . $path;
         file_put_contents($upload_path, $data);
     }
 
@@ -662,7 +661,7 @@ class Manage_all extends RestController
             if ($detail) {
                 $detail->jumlah_all_produk = (int)$jumlah_all;
                 $namaGambar = $detail->image;
-                $gambarUrl = base_url('storage/produk/' . $namaGambar);
+                $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
 
                 if ($checkRating) {
@@ -756,7 +755,7 @@ class Manage_all extends RestController
                 ->count_all_results('rating');
 
             $produk->rating = ($sumRatingBagi != 0) ? ($sumRating / $sumRatingBagi) : 0;
-            $produk->gambar_url = base_url('storage/produk/' . $namaGambar);
+            $produk->gambar_url = base_url('assets/image/produk/' . $namaGambar);
             $modifiedData[] = $produk;
         }
         return $modifiedData;
@@ -822,7 +821,7 @@ class Manage_all extends RestController
             foreach ($detail as $key => $value) {
                 if ($detail) {
                     $namaGambar = $value->image;
-                    $gambarUrl = base_url('storage/produk/' . $namaGambar);
+                    $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                     $value->image = $gambarUrl;
                 }
             }
@@ -879,7 +878,7 @@ class Manage_all extends RestController
             foreach ($detail as $key => $value) {
                 if ($detail) {
                     $namaGambar = $value->image;
-                    $gambarUrl = base_url('storage/produk/' . $namaGambar);
+                    $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                     $value->image = $gambarUrl;
                 }
             }
@@ -946,7 +945,7 @@ class Manage_all extends RestController
             $sumRatingBagi = $this->db->where('id_produk', $produk->id)->count_all_results('rating');
 
             $produk->rating = ($sumRatingBagi != 0) ? ($sumRating / $sumRatingBagi) : 0;
-            $gambarUrl = base_url('storage/produk/' . $namaGambar);
+            $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
             $produk->gambar_url = $gambarUrl;
             $modifiedData[] = $produk;
         }
@@ -966,7 +965,7 @@ class Manage_all extends RestController
         $modifiedData = [];
         foreach ($data as $produk) {
             $namaGambar = $produk->image;
-            $gambarUrl = base_url('storage/produk/' . $namaGambar);
+            $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
             $produk->gambar_url = $gambarUrl;
             $modifiedData[] = $produk;
         }
@@ -986,7 +985,7 @@ class Manage_all extends RestController
         $modifiedData = [];
         foreach ($data as $produk) {
             $namaGambar = $produk->image;
-            $gambarUrl = base_url('storage/produk/' . $namaGambar);
+            $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
             $produk->gambar_url = $gambarUrl;
             $modifiedData[] = $produk;
         }
@@ -1005,12 +1004,12 @@ class Manage_all extends RestController
         foreach ($data as $user) {
             $namaGambar = $user->image;
             if ($namaGambar != "" && $namaGambar != null && $namaGambar != "null") {
-                $gambarUrl = base_url('storage/user/' . $namaGambar);
+                $gambarUrl = base_url('assets/image/user/' . $namaGambar);
                 $user->image = $gambarUrl;
             }
             $namaGambar2 = $user->ktp_image;
             if ($namaGambar2 != "" && $namaGambar2 != null && $namaGambar2 != "null") {
-                $gambarUrl2 = base_url('storage/ktp/' . $namaGambar2);
+                $gambarUrl2 = base_url('assets/image/ktp/' . $namaGambar2);
                 $user->ktp_image = $gambarUrl2;
             }
             $modifiedData[] = $user;
@@ -1055,8 +1054,8 @@ class Manage_all extends RestController
                 $file_p = $this->post('file_image');
                 $file_k = $this->post('file_ktp_image');
                 $this->load->helper('file');
-                write_file('./storage/user/' . $file_p, base64_decode($this->post('image')));
-                write_file('./storage/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
+                write_file('./assets/image/user/' . $file_p, base64_decode($this->post('image')));
+                write_file('./assets/image/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
                 $data = [
                     'name' => $this->post('name'),
                     'username' => $this->post('username'),

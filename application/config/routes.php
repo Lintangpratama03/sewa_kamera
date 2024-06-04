@@ -92,27 +92,41 @@ $route['history-kembali/(:num)'] = 'Manage_history_kembali_detail/index/$1';
 
 $route['manage-ulasan-detail/(:num)'] = 'Manage_ulasan_detail/index/$1';
 
-
-
-
-// api
-$route['api/manage_product'] = 'api/Manage_product/index';
-$route['api/manage_product/category'] = 'api/Manage_product/category';
-$route['api/manage_product/product'] = 'api/Manage_product/product';
-$route['api/manage_product/insert'] = 'api/Manage_product/insert';
-$route['api/manage_product/update'] = 'api/Manage_product/update';
-$route['api/manage_product/delete'] = 'api/Manage_product/delete';
-
-
-$route['api/manage_all'] = 'api/Manage_all/index';
-$route['api/manage_all/login'] = 'api/Manage_all/login';
-$route['api/manage_all/produk'] = 'api/Manage_all/get_produk';
-$route['api/manage_all/produk/terbaru'] = 'api/Manage_all/get_produk_terbaru';
-$route['api/manage_all/produk/terlaris'] = 'api/Manage_all/get_produk_terlaris';
-$route['api/manage_all/category'] = 'api/Manage_all/get_category';
-$route['api/manage_all/produk/detail/(:num)'] = 'api/Manage_all/get_detail_produk/$1';
-$route['api/manage_all/keranjang/insert'] = 'api/Manage_all/insert_keranjang';
-$route['api/manage_all/keranjang'] = 'api/Manage_all/get_keranjang';
-$route['api/manage_all/mitra'] = 'api/Manage_all/get_mitra';
-$route['api/manage_all/keranjang/delete/(:num)'] = 'api/Manage_all/delete_keranjang/$1';
-$route['api/manage_all/keranjang/update/(:num)'] = 'api/Manage_all/update_qty_keranjang/$1';
+// API
+$route['get_user'] = 'api/Manage_all/index_get';
+$route['login'] = 'api/Manage_all/login_post';
+$route['get_produk'] = 'api/Manage_all/produk_get';
+$route['get_produk_terbaru'] = 'api/Manage_all/produk_terbaru_get';
+$route['get_category'] = 'api/Manage_all/get_category_get';
+$route['get_detail_produk/(:num)'] = 'api/Manage_all/get_detail_produk_get/$1';
+$route['insert_keranjang'] = 'api/Manage_all/insert_keranjang_post';
+$route['get_keranjang/(:num)'] = 'api/Manage_all/get_keranjang_get/$1';
+$route['delete_keranjang/(:num)'] = 'api/Manage_all/delete_keranjang_delete/$1';
+$route['update_qty_keranjang/(:num)'] = 'api/Manage_all/update_qty_keranjang_put/$1';
+$route['get_mitra'] = 'api/Manage_all/get_mitra_get';
+$route['create_transaksi_booking'] = 'api/Manage_all/create_transaksi_booking_post';
+$route['get_booking_transaksi/(:num)'] = 'api/Manage_all/get_booking_transaksi_get/$1';
+$route['get_terverifikasi_transaksi/(:num)'] = 'api/Manage_all/get_terverifikasi_transaksi_get/$1';
+$route['charge'] = 'api/Manage_all/charge_post';
+$route['get_detail_transaksi_bayar'] = 'api/Manage_all/get_detail_transaksi_bayar_get';
+$route['get_update_transaksi_status'] = 'api/Manage_all/get_update_transaksi_status_post';
+$route['get_update_status_expired'] = 'api/Manage_all/get_update_status_expired_post';
+$route['register'] = 'api/Manage_all/register_post';
+$route['get_dibayar_transaksi/(:num)'] = 'api/Manage_all/get_dibayar_transaksi_get/$1';
+$route['get_cek_expired/(:num)'] = 'api/Manage_all/get_cek_expired_get/$1';
+$route['get_lunas_transaksi/(:num)'] = 'api/Manage_all/get_lunas_transaksi_get/$1';
+$route['get_dipinjam_transaksi/(:num)'] = 'api/Manage_all/get_dipinjam_transaksi_get/$1';
+$route['get_selesai_transaksi/(:num)'] = 'api/Manage_all/get_selesai_transaksi_get/$1';
+$route['get_expired_transaksi/(:num)'] = 'api/Manage_all/get_expired_transaksi_get/$1';
+$route['get_detail_history'] = 'api/Manage_all/get_detail_history_get';
+$route['get_produk_rating'] = 'api/Manage_all/get_produk_rating_get';
+$route['create_data_rating'] = 'api/Manage_all/create_data_rating_post';
+$route['get_rekomendasi_produk'] = 'api/Manage_all/get_rekomendasi_produk_get';
+$route['get_detail_rating/(:num)'] = 'api/Manage_all/get_detail_rating_get/$1';
+$route['get_detail_ulasan/(:num)'] = 'api/Manage_all/get_detail_ulasan_get/$1';
+$route['get_profile/(:num)'] = 'api/Manage_all/get_profile_get/$1';
+$route['update_profile'] = 'api/Manage_all/update_profile_post';
+$route['update_password'] = 'api/Manage_all/update_password_post';
+$route['get_list_produk'] = 'api/Manage_all/get_list_produk_get';
+$route['get_category_spinner'] = 'api/Manage_all/get_category_spinner_get';
+$route['get_detail_mitra/(:num)'] = 'api/Manage_all/get_detail_mitra_get/$1';

@@ -82,24 +82,12 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title">Monthly Recap Report</h5>
+                            <h5 class="card-title">Data Pemasukan</h5>
 
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
                                 </button>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                                        <i class="fas fa-wrench"></i>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right" role="menu">
-                                        <a href="#" class="dropdown-item">Action</a>
-                                        <a href="#" class="dropdown-item">Another action</a>
-                                        <a href="#" class="dropdown-item">Something else here</a>
-                                        <a class="dropdown-divider"></a>
-                                        <a href="#" class="dropdown-item">Separated link</a>
-                                    </div>
-                                </div>
                                 <button type="button" class="btn btn-tool" data-card-widget="remove">
                                     <i class="fas fa-times"></i>
                                 </button>
@@ -108,60 +96,14 @@
                         <!-- /.card-header -->
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-8">
+                                <div class="col-md-12">
                                     <p class="text-center">
-                                        <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
+                                        <strong>Grafik Pemasukan</strong>
                                     </p>
-
                                     <div class="chart">
-                                        <!-- Sales Chart Canvas -->
                                         <canvas id="salesChart" height="180" style="height: 180px;"></canvas>
                                     </div>
-                                    <!-- /.chart-responsive -->
                                 </div>
-                                <!-- /.col -->
-                                <div class="col-md-4">
-                                    <p class="text-center">
-                                        <strong>Goal Completion</strong>
-                                    </p>
-
-                                    <div class="progress-group">
-                                        Add Products to Cart
-                                        <span class="float-right"><b>160</b>/200</span>
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar bg-primary" style="width: 80%"></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.progress-group -->
-
-                                    <div class="progress-group">
-                                        Complete Purchase
-                                        <span class="float-right"><b>310</b>/400</span>
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar bg-danger" style="width: 75%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- /.progress-group -->
-                                    <div class="progress-group">
-                                        <span class="progress-text">Visit Premium Page</span>
-                                        <span class="float-right"><b>480</b>/800</span>
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar bg-success" style="width: 60%"></div>
-                                        </div>
-                                    </div>
-
-                                    <!-- /.progress-group -->
-                                    <div class="progress-group">
-                                        Send Inquiries
-                                        <span class="float-right"><b>250</b>/500</span>
-                                        <div class="progress progress-sm">
-                                            <div class="progress-bar bg-warning" style="width: 50%"></div>
-                                        </div>
-                                    </div>
-                                    <!-- /.progress-group -->
-                                </div>
-                                <!-- /.col -->
                             </div>
                             <!-- /.row -->
                         </div>
@@ -170,7 +112,7 @@
                             <div class="row">
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
+
                                         <h5 class="description-header">Rp. <?= $pendapatan_bulan_kemarin; ?></h5>
                                         <span class="description-text">BULAN KEMARIN</span>
                                     </div>
@@ -179,7 +121,7 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
+
                                         <h5 class="description-header">Rp. <?= $pendapatan_bulan_ini; ?></h5>
                                         <span class="description-text">BULAN INI</span>
                                     </div>
@@ -188,7 +130,7 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block border-right">
-                                        <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
+
                                         <h5 class="description-header">Rp. <?= $pendapatan_tahun_ini; ?></h5>
                                         <span class="description-text">TAHUN INI</span>
                                     </div>
@@ -197,7 +139,7 @@
                                 <!-- /.col -->
                                 <div class="col-sm-3 col-6">
                                     <div class="description-block">
-                                        <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
+
                                         <h5 class="description-header">Rp. <?= $pendapatan_all; ?></h5>
                                         <span class="description-text">ALL TIME</span>
                                     </div>
@@ -218,20 +160,12 @@
                         <div class="card-header border-0">
                             <div class="d-flex justify-content-between">
                                 <h3 class="card-title">Grafik Penyewaan Perbulan</h3>
-                                <a href="javascript:void(0);">View Report</a>
                             </div>
                         </div>
                         <div class="card-body">
                             <div class="d-flex">
                                 <p class="d-flex flex-column">
-                                    <span class="text-bold text-lg"><?= $jumlah_sewa; ?></span>
-                                    <span>Total Seluruh Penyewaan</span>
-                                </p>
-                                <p class="ml-auto d-flex flex-column text-right">
-                                    <span class="text-success">
-                                        <i class="fas fa-arrow-up"></i> 12.5%
-                                    </span>
-                                    <span class="text-muted">Since last week</span>
+                                    <span>Total Seluruh Penyewaan: <?= $jumlah_sewa; ?></span>
                                 </p>
                             </div>
                             <div class="position-relative mb-4">
@@ -254,18 +188,6 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="d-flex">
-                                <p class="d-flex flex-column">
-                                    <span class="text-bold text-lg">$18,230.00</span>
-                                    <span>Sales Over Time</span>
-                                </p>
-                                <!-- <p class="ml-auto d-flex flex-column text-right">
-                                    <span class="text-success">
-                                        <i class="fas fa-arrow-up"></i> 33.1%
-                                    </span>
-                                </p> -->
-                            </div>
-                            <!-- /.d-flex -->
 
                             <div class="position-relative mb-4">
                                 <table id="example" class="table table-hover table-bordered" style="width:100%">
@@ -295,6 +217,8 @@
     var _controller = '<?= $this->router->fetch_class() ?>';
     var visitorsChartData = <?php echo json_encode(array_values($chartData)); ?>;
     var visitorsChartLabels = <?php echo json_encode(array_keys($chartData)); ?>;
+    var salesChartData = <?php echo json_encode(array_values($chartPendapatan)); ?>;
+    var salesChartLabels = <?php echo json_encode(array_keys($chartPendapatan)); ?>;
     var maxValue = Math.max(...visitorsChartData); // Mendapatkan nilai maksimum dari data
     var suggestedMax = Math.ceil(maxValue / 5) * 5 + 5;
 </script>

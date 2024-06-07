@@ -78,11 +78,20 @@ class Data_sewa extends CI_Controller
     }
     public function get_data()
     {
-        $query = "SELECT DATE(a.tgl_booking) AS tgl_booking_date, a.*, c.name 
-                FROM transaksi a 
-                JOIN st_user c ON c.id = a.id_user 
-                WHERE a.is_deleted = 0 
-                AND (a.status = 'booking' OR a.status = 'terverifikasi' OR a.status = 'bayar' OR a.status = 'lunas')";
+        $query = "SELECT 
+                    DATE(a.tgl_booking) AS tgl_booking_date, 
+                    a.*, 
+                    c.name AS user_name,
+                    d.name AS mitra_name
+                FROM 
+                    transaksi a 
+                JOIN 
+                    st_user c ON c.id = a.id_user
+                JOIN 
+                    st_user d ON d.id = a.id_mitra
+                WHERE 
+                    a.is_deleted = 0;
+                ";
         $result = $this->db->query($query)->result();
         echo json_encode($result);
     }

@@ -99,7 +99,8 @@ function get_data() {
                         },
                     },
                     { data: "tgl_booking_date",className: "text-center" },
-                    { data: "name",className: "text-center" },
+                    { data: "user_name",className: "text-center" },
+                    { data: "mitra_name",className: "text-center" },
                     { data: "tgl_pinjam",className: "text-center" },
                     {
                         data: "status",
@@ -113,6 +114,10 @@ function get_data() {
                                 return '<button type="button" class="btn btn-block bg-gradient-info btn-xs">Proses Bayar</button>';
                             } else if (data == "lunas") {
                                 return '<button type="button" class="btn btn-block bg-gradient-success btn-xs">Terbayar</button>';
+                            } else if (data == "dipinjam") {
+                                return '<button type="button" class="btn btn-block bg-gradient-warning btn-xs">Dipinjam</button>';
+                            } else if (data == "selesai") {
+                                return '<button type="button" class="btn btn-block bg-gradient-success btn-xs">Selesai</button>';
                             }
                         },
                     },
@@ -120,37 +125,11 @@ function get_data() {
                         data: "status",
                         className: "text-center",
                         render: function (data, type, row) {
-                            if (data == "booking") {
                                 return (
                                     ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
                                     row.id +
                                     ')"><i class="fa-solid fa-eye"></i></button>'
                                 );
-                            } else if (data == "terverifikasi") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>'
-                                );
-                            } else if (data == "bayar") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>' +
-                                    ' <button class="btn btn-warning" data-toggle="modal" data-target="#detailBayar" title="detail-bayar" onclick="submit(' +
-									row.id +
-									')"><i class="fa-solid fa-shopping-cart"></i></button>'
-                                );
-                            } else if (data == "lunas") {
-                                return (
-                                    ' <button class="btn btn-info" data-toggle="modal" data-target="#detailPesan" title="detail" onclick="submit(' +
-                                    row.id +
-                                    ')"><i class="fa-solid fa-eye"></i></button>' +
-                                    ' <button class="btn btn-warning" data-toggle="modal" data-target="#detailBayar" title="detail-bayar" onclick="submit(' +
-									row.id +
-									')"><i class="fa-solid fa-shopping-cart"></i></button>'
-                                );
-                            }
                         },
                     },
                 ],
@@ -236,19 +215,6 @@ function submit(x) {
                     console.error("AJAX Error: " + error);
                 }
             });
-
-            if (hasil[0].status === "booking") {
-                $('#btn-ubah').show();
-			} else if (hasil[0].status === "lunas") {
-                $('#btn-ubah').hide();
-                $('#btn-tolak').hide();
-			} else if (hasil[0].status === "bayar") {
-                $('#btn-ubah').hide();
-                $('#btn-tolak').hide();
-                $('#btn-ambil').hide();
-            } else{
-                $('#btn-ubah').hide();
-			}
         },
     });
     delete_form();

@@ -147,6 +147,9 @@ class Dashboard_mitra extends CI_Controller
 		$data_chart = $this->chart_sewa_bulanan($id, $tahun);
 		$this->app_data['chartData'] = $data_chart;
 
+		$pendapatan_chart = $this->chart_pendapatan_bulanan($id, $tahun);
+		$this->app_data['chartPendapatan'] = $pendapatan_chart;
+
 		$this->load->view('template-mitra/start', $this->app_data);
 		$this->load->view('template-mitra/header', $this->app_data);
 		$this->load->view('front_page/dashboard', $this->app_data);
@@ -155,22 +158,6 @@ class Dashboard_mitra extends CI_Controller
 		$this->load->view('js-custom', $this->app_data);
 	}
 
-	// public function get_data()
-	// {
-	// 	$query = [
-	// 		'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.card_image, a.username, a.password, a.last_login, b.name as akses',
-	// 		'from' => 'st_user a',
-	// 		'join' => [
-	// 			'app_credential b, b.id = a.id_credential'
-	// 		],
-	// 		'where' => [
-	// 			'a.is_deleted' => '0',
-	// 			'a.id_credential' => '1'
-	// 		]
-	// 	];
-	// 	$result = $this->data->get($query)->result();
-	// 	echo json_encode($result);
-	// }
 	public function get_data_chart()
 	{
 		$query = [
@@ -218,10 +205,46 @@ class Dashboard_mitra extends CI_Controller
 
 		return $data;
 	}
+	public function chart_pendapatan_bulanan($id_mitra, $tahun)
+	{
+		if (!$id_mitra) {
+			$where = array('email' => $this->session->userdata('email'));
+			$data['user'] = $this->data->find('st_user', $where)->row_array();
+			$id_mitra = $data['user']['id'];
+		}
+		$query = $this->db->query("
+				SELECT 
+				YEAR(tgl_transaksi) AS tahun,
+				MONTH(tgl_transaksi) AS bulan,
+				sum(total_harga) AS jumlah_transaksi_per_bulan
+			FROM transaksi
+			WHERE (status = 'selesai' OR status = 'dipinjam' OR status = 'lunas')
+			AND id_mitra = $id_mitra
+			AND YEAR(tgl_transaksi) = $tahun
+			GROUP BY YEAR(tgl_transaksi), MONTH(tgl_transaksi)
+			ORDER BY MONTH(tgl_transaksi);
+			");
+
+		$result = $query->result();
+
+		$data = [];
+		foreach ($result as $value) {
+			$monthName = $this->getMonth($value->bulan);
+			$data[$monthName] = $value->jumlah_transaksi_per_bulan;
+		}
+
+		return $data;
+	}
 
 	public function get_chart_data($id_mitra, $tahun)
 	{
 		$result = $this->chart_sewa_bulanan($id_mitra, $tahun);
+		echo json_encode($result);
+	}
+
+	public function get_chart_pendapatan($id_mitra, $tahun)
+	{
+		$result = $this->chart_pendapatan_bulanan($id_mitra, $tahun);
 		echo json_encode($result);
 	}
 

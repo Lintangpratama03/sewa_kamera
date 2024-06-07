@@ -3,12 +3,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Kelola Transaksi Pemesanan</h1>
+                    <h1>Data Pemesanan</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="<?= base_url('dashboard') ?>">Home</a></li>
-                        <li class="breadcrumb-item active">Transaksi</li>
+                        <li class="breadcrumb-item active">Data Sewa</li>
                     </ol>
                 </div>
             </div>
@@ -16,7 +16,7 @@
     </section>
     <section class="content">
         <div class="card">
-            <h5 class="card-header">Kelola Transaksi</h5>
+            <h5 class="card-header">Data</h5>
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-lg-3">
@@ -57,6 +57,7 @@
                             <th width="5%">No</th>
                             <th width="10%">Tgl Booking</th>
                             <th width="10%">Nama Pelanggan</th>
+                            <th width="10%">Nama Mitra</th>
                             <th width="10%">Tanggal Pinjam</th>
                             <th width="10%">Status</th>
                             <th width="10%">Aksi</th>
@@ -105,14 +106,6 @@
                             <tbody>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-start">
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-tolak" onclick="tolak_data()" class="btn btn-outline-danger btn-block">Tolak</button>
-                        </div>
-                        <div class="col-lg-2">
-                            <button type="button" id="btn-ubah" onclick="terima_data()" class="btn btn-outline-success btn-block">Konfirmasi</button>
-                        </div>
                     </div>
                 </div>
             </div>

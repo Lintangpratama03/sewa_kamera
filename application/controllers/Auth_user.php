@@ -95,8 +95,10 @@ class Auth_user extends CI_Controller
 
 
         if ($this->form_validation->run() == false) {
-            $this->load->view('front_page/auth/registration');
-            $this->load->view('js-custom', $this->app_data);
+            $errors = $this->form_validation->error_array();
+            $errorMessages = implode('<br>', $errors);
+            $this->session->set_flashdata('errors', $errorMessages);
+            redirect('');
         } else {
             $nama = $this->input->post('nama');
             $email = $this->input->post('email');

@@ -12,6 +12,7 @@ class Manage_all extends RestController
         parent::__construct();
         $this->load->database();
         $this->load->helper(['form', 'url']);
+        $this->load->library('curl');
     }
 
     public function index_get()
@@ -24,7 +25,13 @@ class Manage_all extends RestController
     {
         $email = $this->post('email');
         $password = $this->post('password');
-        $data = $this->db->get_where('st_user', array('email' => $email, 'password' => $password))->row();
+
+        // Add conditions for id_credential and is_aktif in the query
+        $this->db->where('email', $email);
+        $this->db->where('password', $password);
+        $this->db->where('id_credential', 3);
+        $this->db->where('is_aktif', 1);
+        $data = $this->db->get('st_user')->row();
 
         if ($data) {
             if (!is_null($data->image)) {
@@ -45,11 +52,14 @@ class Manage_all extends RestController
             ], RestController::HTTP_NOT_FOUND);
         }
     }
+
+
     public function produk_get()
     {
         $data = $this->db->select('p.id, p.id_mitra, c.name as id_category, p.nama_produk, p.image, p.type, p.harga, p.stok, p.deskripsi')
             ->from('product as p')
             ->join('category as c', 'c.id = p.id_category', 'left')
+            ->where('p.is_deleted', 0)
             ->limit(3)
             ->get()
             ->result();
@@ -68,6 +78,7 @@ class Manage_all extends RestController
         $data = $this->db->select('p.id, p.id_mitra, c.name as id_category, p.nama_produk, p.image, p.type, p.harga, p.stok, p.deskripsi')
             ->from('product as p')
             ->join('category as c', 'c.id = p.id_category', 'left')
+            ->where('p.is_deleted', 0)
             ->order_by('p.created_date', 'desc')
             ->limit(3)
             ->get()
@@ -104,6 +115,7 @@ class Manage_all extends RestController
             ->from('product as p')
             ->join('category as c', 'c.id = p.id_category', 'left')
             ->join('st_user as s', 's.id = p.id_mitra', 'left')
+            ->where('p.is_deleted', 0)
             ->where('p.id', $id)
             ->get()
             ->result();
@@ -226,6 +238,8 @@ class Manage_all extends RestController
     {
         $data = $this->db->select('id , name , image')
             ->where('id_credential', 2)
+            ->where('is_aktif', 1)
+            ->where('is_deleted', 0)
             ->get('st_user')
             ->result();
 
@@ -262,7 +276,8 @@ class Manage_all extends RestController
         $request_data = json_decode($this->post('data'), true);
 
         try {
-            $transaksi_id = $this->db->insert('transaksi', [
+            // Insert into the transaksi table
+            $this->db->insert('transaksi', [
                 'id_user' => (int)$this->post('id_user'),
                 'status' => $this->post('status'),
                 'tgl_pinjam' => $this->post('tgl_pinjam'),
@@ -271,7 +286,7 @@ class Manage_all extends RestController
                 'id_mitra' => (int)$this->post('id_mitra'),
                 'total_harga' => (int)$this->post('total_harga')
             ]);
-
+            $transaksi_id = $this->db->insert_id();
             foreach ($request_data as $item) {
                 $data = [
                     "id_produk" => (int)$item["id_produk"],
@@ -281,6 +296,7 @@ class Manage_all extends RestController
                 ];
                 $this->db->insert('detail_transaksi', $data);
             }
+
 
             $this->response([
                 "success" => true,
@@ -322,7 +338,7 @@ class Manage_all extends RestController
                 ->row();
 
             if ($detail) {
-                $detail->jumlah_all_produk = (int)$jumlah_all;
+                $detail->jumlah_all_produk = (int)$jumlah_all->jumlah;
                 $namaGambar = $detail->image;
                 $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
@@ -333,6 +349,7 @@ class Manage_all extends RestController
 
         $this->response($transactionsDetails, RestController::HTTP_OK);
     }
+
 
     public function get_terverifikasi_transaksi_get($id)
     {
@@ -363,7 +380,7 @@ class Manage_all extends RestController
                 ->row();
 
             if ($detail) {
-                $detail->jumlah_all_produk = (int)$jumlah_all;
+                $detail->jumlah_all_produk = (int)$jumlah_all->jumlah;
                 $namaGambar = $detail->image;
                 $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
@@ -377,44 +394,55 @@ class Manage_all extends RestController
 
     public function charge_post()
     {
+        // Konfigurasi Midtrans
         $server_key = 'SB-Mid-server-d6Y8GDKsSkjqp_0W0kIujYDQ';
         $is_production = false;
-        $api_url = $is_production ?
-            'https://app.midtrans.com/snap/v1/transactions' :
-            'https://app.sandbox.midtrans.com/snap/v1/transactions';
+        $api_url = $is_production ? 'https://app.midtrans.com/snap/v1/transactions' : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-        if ($this->input->method() === 'post') {
-            $requestBody = json_encode($this->post());
-            $chargeResult = $this->chargeAPI($api_url, $server_key, $requestBody);
-            $this->response($chargeResult['body'], $chargeResult['http_code']);
-        } else {
-            $this->response([
-                'message' => 'Page not found or wrong HTTP request method is used'
-            ], RestController::HTTP_NOT_FOUND);
-        }
+        // Ambil data dari request body
+        $requestBody = $this->post();
+
+        $requestBody = json_encode($requestBody);
+        $chargeResult = $this->chargeAPI($api_url, $server_key, $requestBody);
+
+        $this->response($chargeResult['body'], $chargeResult['http_code']);
     }
+
     private function chargeAPI($api_url, $server_key, $request_body)
     {
-        $response = $this->http->post($api_url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Authorization' => 'Basic ' . base64_encode($server_key . ':')
-            ],
-            'json' => $request_body
-        ]);
+        $headers = array(
+            'Content-Type: application/json',
+            'Accept: application/json',
+            'Authorization: Basic ' . base64_encode($server_key . ':')
+        );
 
-        return [
-            'body' => $response->getBody(),
-            'http_code' => $response->getStatusCode(),
-        ];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $api_url);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch);
+
+        if ($response) {
+            return array(
+                'body' => $response,
+                'http_code' => $httpCode
+            );
+        } else {
+            return array(
+                'body' => 'Error: ' . curl_error($ch),
+                'http_code' => $httpCode
+            );
+        }
     }
 
-    public function get_detail_transaksi_bayar_get()
+    public function get_detail_transaksi_bayar_get($id_user, $id_transaksi)
     {
-        // Mendapatkan detail transaksi berdasarkan ID pengguna dan ID transaksi
-        $id_user = (int) $this->get('id_user');
-        $id_transaksi = (int) $this->get('id_transaksi');
 
         $this->db->select('t.id, t.total_harga, t.id_user, su.name, su.email, su.phone_number, su.ktp');
         $this->db->from('transaksi as t');
@@ -500,7 +528,6 @@ class Manage_all extends RestController
         $this->form_validation->set_rules('ktp', 'KTP', 'required');
         $this->form_validation->set_rules('phone_number', 'Phone Number', 'required');
         $this->form_validation->set_rules('tempat_lahir', 'Place of Birth', 'required');
-        $this->form_validation->set_rules('tanggal_lahir', 'Date of Birth', 'required');
         $this->form_validation->set_rules('alamat', 'Address', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required');
         $this->form_validation->set_rules('file_image', 'Profile Image', 'required');
@@ -535,13 +562,12 @@ class Manage_all extends RestController
                     'name' => $this->post('name'),
                     'username' => $this->post('username'),
                     'email' => $this->post('email'),
-                    'ktp' => $this->post('ktp'),
                     'phone_number' => $this->post('phone_number'),
                     'tempat_lahir' => $this->post('tempat_lahir'),
-                    'alamat' => $this->post('alamat'),
+                    'address' => $this->post('alamat'),
                     'password' => $this->post('password'),
                     'image' => $file_p,
-                    'ktp_image' => $file_k,
+                    'ktp' => $file_k,
                     'konfirmasi_by' => 0
                 ];
 

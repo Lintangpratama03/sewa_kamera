@@ -107,11 +107,13 @@ $route['api/get_mitra'] = 'api/Manage_all/get_mitra';
 $route['api/create_transaksi_booking'] = 'api/Manage_all/create_transaksi_booking';
 $route['api/get_booking_transaksi/(:num)'] = 'api/Manage_all/get_booking_transaksi/$1';
 $route['api/get_terverifikasi_transaksi/(:num)'] = 'api/Manage_all/get_terverifikasi_transaksi/$1';
-$route['api/get_detail_transaksi_bayar/(:num)/(:num)'] = 'api/Manage_all/get_detail_transaksi_bayar/$1/$2';
+$route['api/get_detail_transaksi_bayar'] = 'api/Manage_all/get_detail_transaksi_bayar';
+
 $route['api/get_update_transaksi_status'] = 'api/Manage_all/get_update_transaksi_status';
 $route['api/get_update_status_expired'] = 'api/Manage_all/get_update_status_expired';
-$route['api/charge'] = 'api/Manage_all/charge';
-$route['api/register'] = 'api/Manage_all/register';
+// $route['api/charge'] = 'api/Manage_all/charge';
+$route['charge'] = 'payment/charge';
+$route['register'] = 'api/Manage_all/register';
 $route['api/get_dibayar_transaksi/(:num)'] = 'api/Manage_all/get_dibayar_transaksi/$1';
 $route['api/get_cek_expired/(:num)'] = 'api/Manage_all/get_cek_expired/$1';
 $route['api/get_lunas_transaksi/(:num)'] = 'api/Manage_all/get_lunas_transaksi/$1';

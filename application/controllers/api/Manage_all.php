@@ -381,6 +381,13 @@ class Manage_all extends RestController
 
             if ($detail) {
                 $detail->jumlah_all_produk = (int)$jumlah_all->jumlah;
+                $detail->id_user = (int)$detail->id_user;
+                $detail->sub_harga = (int)$detail->sub_harga;
+                $detail->total_all_produk = (int)$detail->total_all_produk;
+                $detail->harga = (int)$detail->harga;
+                $detail->id = (int)$detail->id;
+                $detail->id_transaksi = (int)$detail->id_transaksi;
+                $detail->jumlah = (int)$detail->jumlah;
                 $namaGambar = $detail->image;
                 $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
                 $detail->image = $gambarUrl;
@@ -392,105 +399,214 @@ class Manage_all extends RestController
         $this->response($transactionsDetails, RestController::HTTP_OK);
     }
 
+    // public function charge_post()
+    // {
+    //     // Konfigurasi Midtrans
+    //     $server_key = 'SB-Mid-server-d6Y8GDKsSkjqp_0W0kIujYDQ';
+    //     $is_production = false;
+    //     $api_url = $is_production ? 'https://app.midtrans.com/snap/v1/transactions' : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+
+    //     // Ambil data dari request body
+    //     $requestBody = file_get_contents('php://input');
+    //     $requestData = json_decode($requestBody, true); // Decode JSON request body to associative array
+
+    //     if (!$requestData) {
+    //         $this->response(['message' => 'Invalid JSON format'], RestController::HTTP_BAD_REQUEST);
+    //         return;
+    //     }
+
+    //     // Charge the API
+    //     $chargeResult = $this->chargeAPI($api_url, $server_key, $requestData);
+
+    //     // Return response
+    //     $this->response($chargeResult['body'], $chargeResult['http_code'])->header('Content-Type', 'application/json');
+    // }
+
+    // function chargeAPI($api_url, $server_key, $request_data)
+    // {
+    //     $curl = curl_init();
+
+    //     $payload = json_encode($request_data);
+
+    //     $authorization = base64_encode($server_key . ':');
+    //     $headers = array(
+    //         'Content-Type: application/json',
+    //         'Accept: application/json',
+    //         'Authorization: Basic ' . $authorization
+    //     );
+
+    //     curl_setopt_array($curl, array(
+    //         CURLOPT_URL => $api_url,
+    //         CURLOPT_RETURNTRANSFER => true,
+    //         CURLOPT_ENCODING => '',
+    //         CURLOPT_MAXREDIRS => 10,
+    //         CURLOPT_TIMEOUT => 0,
+    //         CURLOPT_FOLLOWLOCATION => true,
+    //         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    //         CURLOPT_CUSTOMREQUEST => 'POST',
+    //         CURLOPT_POSTFIELDS => $payload,
+    //         CURLOPT_HTTPHEADER => $headers,
+    //     ));
+
+    //     $response = curl_exec($curl);
+    //     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+    //     curl_close($curl);
+
+    //     return array(
+    //         'body' => $response,
+    //         'http_code' => $httpCode
+    //     );
+    // }
+
     public function charge_post()
     {
-        // Konfigurasi Midtrans
+        // Set your server key (Note: Server key for sandbox and production mode are different)
         $server_key = 'SB-Mid-server-d6Y8GDKsSkjqp_0W0kIujYDQ';
+        // Set true for production, set false for sandbox
         $is_production = false;
-        $api_url = $is_production ? 'https://app.midtrans.com/snap/v1/transactions' : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+        $api_url = $is_production ?
+            'https://app.midtrans.com/snap/v1/transactions' :
+            'https://app.sandbox.midtrans.com/snap/v1/transactions';
 
-        // Ambil data dari request body
-        $requestBody = $this->post();
+        // Check if method is not HTTP POST, display 404
+        if ($this->input->method() !== 'post') {
+            show_404();
+        }
 
-        $requestBody = json_encode($requestBody);
-        $chargeResult = $this->chargeAPI($api_url, $server_key, $requestBody);
+        // Get the HTTP POST body of the request
+        $request_body = file_get_contents('php://input');
 
-        $this->response($chargeResult['body'], $chargeResult['http_code']);
+        // Call charge API using request body passed by mobile SDK
+        $charge_result = $this->chargeAPI($api_url, $server_key, $request_body);
+
+        // Set the response http status code
+        $this->output->set_status_header($charge_result['http_code']);
+
+        // Then print out the response body
+        $this->output->set_output($charge_result['body']);
     }
 
+    /**
+     * Call charge API using Curl
+     * @param string  $api_url
+     * @param string  $server_key
+     * @param string  $request_body
+     */
     private function chargeAPI($api_url, $server_key, $request_body)
     {
-        $headers = array(
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'Authorization: Basic ' . base64_encode($server_key . ':')
-        );
-
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $api_url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $request_body);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch);
-
-        if ($response) {
-            return array(
-                'body' => $response,
-                'http_code' => $httpCode
-            );
-        } else {
-            return array(
-                'body' => 'Error: ' . curl_error($ch),
-                'http_code' => $httpCode
-            );
-        }
+        $curl_options = array(
+            CURLOPT_URL => $api_url,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_POST => 1,
+            CURLOPT_HEADER => 0,
+            // Add header to the request, including Authorization generated from server key
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Accept: application/json',
+                'Authorization: Basic ' . base64_encode($server_key . ':')
+            ),
+            CURLOPT_POSTFIELDS => $request_body
+        );
+        curl_setopt_array($ch, $curl_options);
+        $result = array(
+            'body' => curl_exec($ch),
+            'http_code' => curl_getinfo($ch, CURLINFO_HTTP_CODE),
+        );
+        return $result;
     }
-
-    public function get_detail_transaksi_bayar_get($id_user, $id_transaksi)
+    public function get_detail_transaksi_bayar_get()
     {
+        // Get request parameters from URL
+        $id_user = $this->input->get('id_user');
+        $id_transaksi = $this->input->get('id_transaksi');
 
-        $this->db->select('t.id, t.total_harga, t.id_user, su.name, su.email, su.phone_number, su.ktp');
-        $this->db->from('transaksi as t');
-        $this->db->join('st_user as s', 's.id = t.id_mitra');
-        $this->db->join('st_user as su', 'su.id = t.id_user');
+        if (is_null($id_user) || is_null($id_transaksi)) {
+            $this->response(['message' => 'Missing parameters'], RestController::HTTP_BAD_REQUEST);
+            return;
+        }
+
+        $this->db->select([
+            't.id',
+            't.total_harga',
+            't.id_user',
+            'su.name',
+            'su.email',
+            'su.phone_number',
+            'su.ktp'
+        ]);
+        $this->db->from('transaksi t');
+        $this->db->join('st_user su', 'su.id = t.id_user', 'left');
         $this->db->where('t.id_user', $id_user);
         $this->db->where('t.id', $id_transaksi);
         $this->db->where('t.status', 'terverifikasi');
-        $data = $this->db->get()->result_array();
+        $transaction_data = $this->db->get()->row();
 
-        $transactionsDetails = [];
+        if ($transaction_data) {
+            $this->db->select([
+                'dt.id',
+                'su.name as nama_mitra',
+                'p.nama_produk',
+                'dt.id_transaksi',
+                'dt.jumlah',
+                'p.harga',
+                'dt.sub_total as sub_harga'
+            ]);
+            $this->db->from('detail_transaksi dt');
+            $this->db->join('product p', 'p.id = dt.id_produk', 'left');
+            $this->db->join('transaksi t', 't.id = dt.id_transaksi', 'left');
+            $this->db->join('st_user su', 'su.id = p.id_mitra', 'left');
+            $this->db->where('dt.id_transaksi', $transaction_data->id);
+            $details = $this->db->get()->result();
 
-        foreach ($data as $value) {
-            $this->db->select('dt.id, su.name as nama_mitra, p.nama_produk, dt.id_transaksi, dt.jumlah, p.harga, dt.sub_total as sub_harga');
-            $this->db->from('detail_transaksi as dt');
-            $this->db->join('product as p', 'p.id = dt.id_produk');
-            $this->db->join('transaksi as t', 't.id = dt.id_transaksi');
-            $this->db->join('st_user as su', 'su.id = p.id_mitra');
-            $this->db->where('dt.id_transaksi', $value['id']);
-            $detail = $this->db->get()->result_array();
+            $detailsArray = [];
+            foreach ($details as $detail) {
+                $detailsArray[] = [
+                    "id" => (int)$detail->id,
+                    "nama_mitra" => $detail->nama_mitra,
+                    "nama_produk" => $detail->nama_produk,
+                    "id_transaksi" => (int)$detail->id_transaksi,
+                    "jumlah" => (int)$detail->jumlah,
+                    "harga" => (int)$detail->harga,
+                    "sub_harga" => (int)$detail->sub_harga
+                ];
+            }
 
-            $transactionsDetails[] = [
-                "id" => $value['id'],
-                "name" => $value['name'],
-                "email" => $value['email'],
-                "phone_number" => $value['phone_number'],
-                "ktp" => $value['ktp'],
-                "total_harga" => $value['total_harga'],
-                "id_user" => $value['id_user'],
-                "product" => $detail
+            $transaction = [
+                "id" => (int)$transaction_data->id,  // Cast to int
+                "name" => $transaction_data->name,
+                "email" => $transaction_data->email,
+                "phone_number" => $transaction_data->phone_number,
+                "ktp" => $transaction_data->ktp,
+                "total_harga" => (int)$transaction_data->total_harga,  // Cast to int
+                "id_user" => (int)$transaction_data->id_user,  // Cast to int
+                "product" => $detailsArray
             ];
-        }
 
-        $this->response($transactionsDetails, RestController::HTTP_OK);
+            $this->response([$transaction], RestController::HTTP_OK);
+        } else {
+            $this->response(['message' => 'Transaction not found or not verified'], RestController::HTTP_NOT_FOUND);
+        }
     }
+
+
+
 
     public function get_update_transaksi_status_post()
     {
         // Memperbarui status transaksi berdasarkan ID transaksi
-        $id = (int) $this->post('id_transaksi');
+        $id = $this->input->get('id_transaksi');
+        $transaction_id = $this->input->get('transaction_id');
+        $transaction_status = $this->input->get('transaction_status');
         $data = [
-            "transaction_id" => $this->post('transaction_id'),
-            "status_bayar" => $this->post('transaction_status'),
-            "tgl_transaksi" => $this->post('transaction_time'),
-            "metode_pembayaran" => $this->post('payment_type'),
-            "tanggal_expire" => $this->post('expiry_time'),
-            "status" => $this->post('status'),
-            "va_number" => $this->post('va_number')
+            "transaction_id" => $transaction_id,
+            "status_bayar" => $transaction_status,
+            "tgl_transaksi" => $this->input->get('transaction_time'),
+            "metode_pembayaran" => $this->input->get('payment_type'),
+            "tanggal_expire" => $this->input->get('expiry_time'),
+            "status" => $this->input->get('status'),
+            "va_number" => $this->input->get('va_number')
         ];
 
         $this->db->where('id', $id);

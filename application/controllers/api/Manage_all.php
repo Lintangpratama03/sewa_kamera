@@ -21,38 +21,70 @@ class Manage_all extends RestController
         $this->response($data, RestController::HTTP_OK);
     }
 
+    // public function login_post()
+    // {
+    //     $email = $this->post('email');
+    //     $password = $this->post('password');
+
+    //     // Add conditions for id_credential and is_aktif in the query
+    //     $this->db->where('email', $email);
+    //     $this->db->where('password', $password);
+    //     $this->db->where('id_credential', 3);
+    //     $this->db->where('is_aktif', 1);
+    //     $data = $this->db->get('st_user')->row();
+
+    //     if ($data) {
+    //         if (!is_null($data->image)) {
+    //             $namaGambar = $data->image;
+    //             $gambarUrl = base_url('assets/image/user/' . $namaGambar);
+    //             $data->image = $gambarUrl;
+    //         }
+
+    //         $this->response([
+    //             "success" => true,
+    //             "message" => "Berhasil login !",
+    //             "data" => $data
+    //         ], RestController::HTTP_OK);
+    //     } else {
+    //         $this->response([
+    //             "success" => false,
+    //             "message" => "Data tidak ada !",
+    //         ], RestController::HTTP_NOT_FOUND);
+    //     }
+    // }
     public function login_post()
     {
         $email = $this->post('email');
         $password = $this->post('password');
 
-        // Add conditions for id_credential and is_aktif in the query
-        $this->db->where('email', $email);
-        $this->db->where('password', $password);
-        $this->db->where('id_credential', 3);
-        $this->db->where('is_aktif', 1);
-        $data = $this->db->get('st_user')->row();
+        $data = $this->db->where('email', $email)
+            ->where('password', $password)
+            ->where('id_credential', 3)
+            ->where('is_aktif', 1)
+            ->get('st_user')
+            ->row();
 
-        if ($data) {
+        if (!is_null($data)) {
             if (!is_null($data->image)) {
                 $namaGambar = $data->image;
                 $gambarUrl = base_url('assets/image/user/' . $namaGambar);
                 $data->image = $gambarUrl;
             }
 
-            $this->response([
+            $result = [
                 "success" => true,
                 "message" => "Berhasil login !",
                 "data" => $data
-            ], RestController::HTTP_OK);
+            ];
         } else {
-            $this->response([
+            $result = [
                 "success" => false,
-                "message" => "Data tidak ada !",
-            ], RestController::HTTP_NOT_FOUND);
+                "message" => "Data tidak ada !"
+            ];
         }
-    }
 
+        $this->response($result, RestController::HTTP_OK);
+    }
 
     public function produk_get()
     {
@@ -79,7 +111,31 @@ class Manage_all extends RestController
             ->from('product as p')
             ->join('category as c', 'c.id = p.id_category', 'left')
             ->where('p.is_deleted', 0)
+            ->where('p.is_aktif', 1)
             ->order_by('p.created_date', 'desc')
+            ->limit(3)
+            ->get()
+            ->result();
+
+        $modifiedData = [];
+        foreach ($data as $produk) {
+            $namaGambar = $produk->image;
+            $sumRating = $this->db->select_sum('rating')->where('id_produk', $produk->id)->get('rating')->row()->rating;
+            $sumRatingBagi = $this->db->where('id_produk', $produk->id)->count_all_results('rating');
+
+            $produk->rating = ($sumRatingBagi != 0) ? ($sumRating / $sumRatingBagi) : 0;
+            $produk->gambar_url = base_url('assets/image/produk/' . $namaGambar);
+            $modifiedData[] = $produk;
+        }
+        $this->response($modifiedData, RestController::HTTP_OK);
+    }
+    public function produk_terlaris_get()
+    {
+        $data = $this->db->select('p.id, p.id_mitra, c.name as id_category, p.nama_produk, p.image, p.type, p.harga, p.stok, p.deskripsi')
+            ->from('product as p')
+            ->join('category as c', 'c.id = p.id_category', 'left')
+            ->where('p.is_deleted', 0)
+            ->order_by('p.created_date', 'asc')
             ->limit(3)
             ->get()
             ->result();
@@ -637,61 +693,72 @@ class Manage_all extends RestController
     }
     public function register_post()
     {
-        $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('username', 'Username', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('ktp', 'KTP', 'required');
         $this->form_validation->set_rules('phone_number', 'Phone Number', 'required');
-        $this->form_validation->set_rules('tempat_lahir', 'Place of Birth', 'required');
-        $this->form_validation->set_rules('alamat', 'Address', 'required');
+        $this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'required');
+        $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
+        $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required');
-        $this->form_validation->set_rules('file_image', 'Profile Image', 'required');
-        $this->form_validation->set_rules('file_ktp_image', 'KTP Image', 'required');
+        $this->form_validation->set_rules('file_image', 'File Image', 'required');
+        $this->form_validation->set_rules('file_ktp_image', 'File KTP Image', 'required');
 
-        if ($this->form_validation->run() === false) {
+        if ($this->form_validation->run() == FALSE) {
             $this->response([
                 'status' => 0,
-                'message' => 'Please adjust the email format!'
+                'message' => 'Harap menyesuaikan emailnya !'
             ], RestController::HTTP_BAD_REQUEST);
         } else {
             $email = $this->post('email');
+
             $cekEmailFound = $this->db->where('email', $email)->count_all_results('st_user');
 
             if ($cekEmailFound > 0) {
                 $this->response([
                     'status' => 0,
-                    'message' => 'Sorry, the email is already registered!'
+                    'message' => 'Maaf email sudah terdaftar !'
                 ], RestController::HTTP_BAD_REQUEST);
             } else {
                 $file_p = $this->post('file_image');
                 $file_k = $this->post('file_ktp_image');
 
                 $dt_credential = $this->db->where('name', 'pelanggan')->get('app_credential')->row();
-                $upload_path_p = 'user/' . $file_p;
-                $upload_path_k = 'ktp/' . $file_k;
-                $this->upload_base64($this->post('image'), $upload_path_p);
-                $this->upload_base64($this->post('ktp_image'), $upload_path_k);
 
-                $userData = [
-                    'id_credential' => $dt_credential->id,
-                    'name' => $this->post('name'),
-                    'username' => $this->post('username'),
-                    'email' => $this->post('email'),
-                    'phone_number' => $this->post('phone_number'),
-                    'tempat_lahir' => $this->post('tempat_lahir'),
-                    'address' => $this->post('alamat'),
-                    'password' => $this->post('password'),
-                    'image' => $file_p,
-                    'ktp' => $file_k,
-                    'konfirmasi_by' => 0
-                ];
+                if ($dt_credential) {
+                    $this->load->helper('file');
 
-                $this->db->insert('st_user', $userData);
-                $this->response([
-                    'status' => 1,
-                    'message' => 'Registration successful!'
-                ], RestController::HTTP_OK);
+                    write_file('./uploads/user/' . $file_p, base64_decode($this->post('image')));
+                    write_file('./uploads/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
+
+                    $user_data = [
+                        'id_credential' => $dt_credential->id,
+                        'name' => $this->post('name'),
+                        'username' => $this->post('username'),
+                        'email' => $this->post('email'),
+                        'ktp' => $this->post('ktp'),
+                        'phone_number' => $this->post('phone_number'),
+                        'tempat_lahir' => $this->post('tempat_lahir'),
+                        'address' => $this->post('alamat'),
+                        'password' => $this->post('password'),
+                        'image' => $file_p,
+                        'ktp_image' => $file_k,
+                        'konfirmasi_by' => 0,
+                    ];
+
+                    $this->db->insert('st_user', $user_data);
+
+                    $this->response([
+                        'status' => 1,
+                        'message' => 'Berhasil melakukan registrasi !'
+                    ], RestController::HTTP_OK);
+                } else {
+                    $this->response([
+                        'status' => 0,
+                        'message' => 'Credential pelanggan tidak ditemukan!'
+                    ], RestController::HTTP_BAD_REQUEST);
+                }
             }
         }
     }
@@ -819,8 +886,8 @@ class Manage_all extends RestController
     }
     public function get_list_produk_get()
     {
-        $type = $this->get('type');
-        $message = $this->get('message');
+        $type = $this->input->get('type');
+        $message = $this->input->get('message');
 
         if ($type == "search") {
             $data = $this->db->select('p.id, p.id_mitra, s.name as nama_mitra, c.name as id_category, p.nama_produk, p.image, p.type, p.harga, p.stok, p.deskripsi')
@@ -937,10 +1004,10 @@ class Manage_all extends RestController
     }
     public function get_detail_history_get()
     {
-        $id = $this->get('id');
-        $transaction_id = $this->get('transaction_id');
+        $id = $this->input->get('id');
+        $transaction_id = $this->input->get('transaction_id');
 
-        $data = $this->db->select('t.id, t.id_user, t.transaction_id, t.status, t.tgl_booking, t.tgl_pinjam, t.tgl_tenggat, t.tgl_terverifikasi, t.tgl_terima, t.tgl_transaksi, t.tgl_selesai, t.metode_pembayaran, t.status_bayar, t.total_harga, t.tanggal_expire, t.va_number')
+        $data = $this->db->select('t.id, t.id_user, t.transaction_id, t.status, t.tgl_booking, t.tgl_pinjam, t.tgl_tenggat, t.tgl_verifikasi, t.tgl_terima, t.tgl_transaksi, t.tgl_selesai, t.metode_pembayaran, t.status_bayar, t.total_harga, t.tanggal_expire, t.va_number')
             ->from('transaksi as t')
             ->join('st_user as s', 's.id = t.id_mitra', 'left')
             ->where('t.id_user', $id)
@@ -976,7 +1043,7 @@ class Manage_all extends RestController
                 "tgl_booking" => $transaction->tgl_booking,
                 "tgl_pinjam" => $transaction->tgl_pinjam,
                 "tgl_tenggat" => $transaction->tgl_tenggat,
-                "tgl_terverifikasi" => $transaction->tgl_terverifikasi,
+                "tgl_terverifikasi" => $transaction->tgl_verifikasi,
                 "tgl_terima" => $transaction->tgl_terima,
                 "tgl_transaksi" => $transaction->tgl_transaksi,
                 "tgl_selesai" => $transaction->tgl_selesai,
@@ -994,8 +1061,8 @@ class Manage_all extends RestController
 
     public function get_produk_rating_get()
     {
-        $id = $this->get('id');
-        $transaction_id = $this->get('transaction_id');
+        $id = $this->input->get('id');
+        $transaction_id = $this->input->get('transaction_id');
 
         $data = $this->db->select('t.id, t.id_user')
             ->from('transaksi as t')
@@ -1136,33 +1203,37 @@ class Manage_all extends RestController
 
     public function get_profile_get($id)
     {
-        $data = $this->db->select('id, name, email, phone_number, tempat_lahir, image, ktp, username, ktp_image, tanggal_lahir, alamat')
-            ->from('st_user')
+        $data = $this->db->select('id, name, email, phone_number, tempat_lahir, image, ktp, username, ktp_image, tanggal_lahir, address as alamat')
             ->where('id', $id)
-            ->get()
+            ->get('st_user')
             ->result();
 
         $modifiedData = [];
         foreach ($data as $user) {
             $namaGambar = $user->image;
-            if ($namaGambar != "" && $namaGambar != null && $namaGambar != "null") {
+            if (!empty($namaGambar) && $namaGambar != "null") {
                 $gambarUrl = base_url('assets/image/user/' . $namaGambar);
-                $user->image = $gambarUrl;
+                $user->image_url = $gambarUrl;
+            } else {
+                $user->image_url = null;
             }
+
             $namaGambar2 = $user->ktp_image;
-            if ($namaGambar2 != "" && $namaGambar2 != null && $namaGambar2 != "null") {
+            if (!empty($namaGambar2) && $namaGambar2 != "null") {
                 $gambarUrl2 = base_url('assets/image/ktp/' . $namaGambar2);
-                $user->ktp_image = $gambarUrl2;
+                $user->ktp_image_url = $gambarUrl2;
+            } else {
+                $user->ktp_image_url = null;
             }
+
             $modifiedData[] = $user;
         }
+
         $this->response($modifiedData, RestController::HTTP_OK);
     }
 
     public function update_profile_post()
     {
-        $this->load->library('form_validation');
-
         $this->form_validation->set_rules('name', 'Name', 'required');
         $this->form_validation->set_rules('username', 'Username', 'required');
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
@@ -1171,21 +1242,19 @@ class Manage_all extends RestController
         $this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'required');
         $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
         $this->form_validation->set_rules('alamat', 'Alamat', 'required');
-        $this->form_validation->set_rules('file_image', 'File Image', 'required');
-        $this->form_validation->set_rules('file_ktp_image', 'File KTP Image', 'required');
 
         if ($this->form_validation->run() == FALSE) {
-            $errors = $this->form_validation->error_array();
             $this->response([
                 'status' => 0,
-                'message' => 'Harap menyesuaikan emailnya !',
-                'errors' => $errors
+                'message' => 'Harap menyesuaikan emailnya !'
             ], RestController::HTTP_BAD_REQUEST);
         } else {
             $id = $this->post('id');
             $email = $this->post('email');
 
-            $cekEmailFound = $this->db->where('id !=', $id)->where('email', $email)->count_all_results('st_user');
+            $cekEmailFound = $this->db->where('email', $email)
+                ->where_not_in('id', $id)
+                ->count_all_results('st_user');
 
             if ($cekEmailFound > 0) {
                 $this->response([
@@ -1193,23 +1262,47 @@ class Manage_all extends RestController
                     'message' => 'Maaf email sudah terdaftar !'
                 ], RestController::HTTP_BAD_REQUEST);
             } else {
-                $file_p = $this->post('file_image');
-                $file_k = $this->post('file_ktp_image');
-                $this->load->helper('file');
-                write_file('./assets/image/user/' . $file_p, base64_decode($this->post('image')));
-                write_file('./assets/image/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
-                $data = [
+                $updateData = [
                     'name' => $this->post('name'),
                     'username' => $this->post('username'),
                     'email' => $this->post('email'),
                     'ktp' => $this->post('ktp'),
                     'phone_number' => $this->post('phone_number'),
                     'tempat_lahir' => $this->post('tempat_lahir'),
-                    'alamat' => $this->post('alamat'),
-                    'image' => $file_p,
-                    'ktp_image' => $file_k
+                    'tanggal_lahir' => $this->post('tanggal_lahir'),
+                    'address' => $this->post('alamat')
                 ];
-                $this->db->where('id', $id)->update('st_user', $data);
+
+                // Handle file_image
+                if (!is_null($this->post('file_image'))) {
+                    $user = $this->db->where('id', $id)->get('st_user')->row();
+                    if ($user->image != null) {
+                        $gambar_path = FCPATH . "uploads/user/{$user->image}";
+                        if (file_exists($gambar_path)) {
+                            unlink($gambar_path);
+                        }
+                    }
+                    $file_p = $this->post('file_image');
+                    write_file('./uploads/user/' . $file_p, base64_decode($this->post('image')));
+                    $updateData['image'] = $file_p;
+                }
+
+                // Handle file_ktp_image
+                if (!is_null($this->post('file_ktp_image'))) {
+                    $user = $this->db->where('id', $id)->get('st_user')->row();
+                    if ($user->ktp_image != null) {
+                        $gambar_path = FCPATH . "uploads/ktp/{$user->ktp_image}";
+                        if (file_exists($gambar_path)) {
+                            unlink($gambar_path);
+                        }
+                    }
+                    $file_k = $this->post('file_ktp_image');
+                    write_file('./uploads/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
+                    $updateData['ktp_image'] = $file_k;
+                }
+
+                $this->db->where('id', $id)->update('st_user', $updateData);
+
                 $this->response([
                     'status' => 1,
                     'message' => 'Berhasil melakukan update profile !'

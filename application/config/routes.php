@@ -133,3 +133,4 @@ $route['api/update_password'] = 'api/Manage_all/update_password';
 $route['api/get_list_produk'] = 'api/Manage_all/get_list_produk';
 $route['api/get_category_spinner'] = 'api/Manage_all/get_category_spinner';
 $route['api/get_detail_mitra/(:num)'] = 'api/Manage_all/get_detail_mitra/$1';
+$route['api/get_tolak_transaksi/(:num)'] = 'api/Manage_all/get_tolak_transaksi/$1';

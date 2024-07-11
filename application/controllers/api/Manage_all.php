@@ -1315,4 +1315,46 @@ class Manage_all extends RestController
     {
         // Implement update password logic here
     }
+    public function get_tolak_transaksi_get($id)
+    {
+        $data = $this->db->select('t.id, t.status, t.total_harga, t.id_user')
+            ->from('transaksi as t')
+            ->join('st_user as s', 's.id = t.id_mitra', 'left')
+            ->where('t.id_user', $id)
+            ->where('t.is_deleted', '1')
+            ->get()
+            ->result();
+
+        $transactionsDetails = [];
+
+        foreach ($data as $transaction) {
+            $detail = $this->db->select('t.id, su.name as nama_mitra, t.status, p.image, p.nama_produk, dt.id_transaksi, dt.jumlah, p.harga, dt.sub_total as sub_harga, t.total_harga as total_all_produk')
+                ->from('detail_transaksi as dt')
+                ->join('product as p', 'p.id = dt.id_produk', 'left')
+                ->join('transaksi as t', 't.id = dt.id_transaksi', 'left')
+                ->join('st_user as su', 'su.id = p.id_mitra', 'left')
+                ->where('dt.id_transaksi', $transaction->id)
+                ->limit(1)
+                ->get()
+                ->row();
+
+            $jumlah_all = $this->db->select_sum('jumlah')
+                ->from('detail_transaksi')
+                ->where('id_transaksi', $transaction->id)
+                ->get()
+                ->row()
+                ->jumlah;
+
+            if ($detail) {
+                $detail->jumlah_all_produk = (int)$jumlah_all;
+                $namaGambar = $detail->image;
+                $gambarUrl = base_url('assets/image/produk/' . $namaGambar);
+                $detail->image = $gambarUrl;
+
+                $transactionsDetails[] = $detail;
+            }
+        }
+
+        $this->response($transactionsDetails, RestController::HTTP_OK);
+    }
 }

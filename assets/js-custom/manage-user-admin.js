@@ -191,7 +191,7 @@ function submit(x) {
 				var profil = hasil[0].image;
 				imagePreview.innerHTML = `<img src="${base_url}assets/image/user/${profil}" class="img-thumbnail" alt="Preview Image" style="width: 100px; height: auto;">`;
 				var ktp = hasil[0].ktp;
-				imagePreview1.innerHTML = `<img src="${base_url}assets/image/user/${ktp}" class="img-thumbnail" alt="Preview Image" style="width: 100px; height: auto;">`;
+				imagePreview1.innerHTML = `<img src="${base_url}assets/image/ktp/${ktp}" class="img-thumbnail" alt="Preview Image" style="width: 100px; height: auto;">`;
 				$("[name='username']").val(hasil[0].username);
 				$("[name='password']").val(hasil[0].password);
 			},

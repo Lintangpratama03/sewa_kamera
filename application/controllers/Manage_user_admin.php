@@ -80,7 +80,7 @@ class Manage_user_admin extends CI_Controller
     public function get_data()
     {
         $query = [
-            'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.ktp, a.username, a.password, a.last_login, b.name as akses',
+            'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.ktp_image as ktp, a.username, a.password, a.last_login, b.name as akses',
             'from' => 'st_user a',
             'join' => [
                 'app_credential b, b.id = a.id_credential'
@@ -99,7 +99,7 @@ class Manage_user_admin extends CI_Controller
     {
         $id = $this->input->post('id');
         $query = [
-            'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.ktp, a.username, a.password, a.last_login, a.id_credential',
+            'select' => 'a.id, a.name, a.email, a.image, a.phone_number, a.address, a.ktp_image as ktp, a.username, a.password, a.last_login, a.id_credential',
             'from' => 'st_user a',
             'where' => [
                 'a.is_deleted' => '0',

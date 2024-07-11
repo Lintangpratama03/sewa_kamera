@@ -739,7 +739,7 @@ class Manage_all extends RestController
                         'ktp' => $this->post('ktp'),
                         'phone_number' => $this->post('phone_number'),
                         'tempat_lahir' => $this->post('tempat_lahir'),
-                        'address' => $this->post('address'),
+                        'address' => $this->post('alamat'),
                         'password' => $this->post('password'),
                         'image' => $file_p,
                         'ktp_image' => $file_k,

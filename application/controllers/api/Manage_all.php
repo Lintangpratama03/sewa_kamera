@@ -728,8 +728,8 @@ class Manage_all extends RestController
                 if ($dt_credential) {
                     $this->load->helper('file');
 
-                    write_file('./uploads/user/' . $file_p, base64_decode($this->post('image')));
-                    write_file('./uploads/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
+                    write_file('./image/user/' . $file_p, base64_decode($this->post('image')));
+                    write_file('./image/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
 
                     $user_data = [
                         'id_credential' => $dt_credential->id,
@@ -1276,13 +1276,13 @@ class Manage_all extends RestController
                 if (!is_null($this->post('file_image'))) {
                     $user = $this->db->where('id', $id)->get('st_user')->row();
                     if ($user->image != null) {
-                        $gambar_path = FCPATH . "uploads/user/{$user->image}";
+                        $gambar_path = FCPATH . "image/user/{$user->image}";
                         if (file_exists($gambar_path)) {
                             unlink($gambar_path);
                         }
                     }
                     $file_p = $this->post('file_image');
-                    write_file('./uploads/user/' . $file_p, base64_decode($this->post('image')));
+                    write_file('./image/user/' . $file_p, base64_decode($this->post('image')));
                     $updateData['image'] = $file_p;
                 }
 
@@ -1290,13 +1290,13 @@ class Manage_all extends RestController
                 if (!is_null($this->post('file_ktp_image'))) {
                     $user = $this->db->where('id', $id)->get('st_user')->row();
                     if ($user->ktp_image != null) {
-                        $gambar_path = FCPATH . "uploads/ktp/{$user->ktp_image}";
+                        $gambar_path = FCPATH . "image/ktp/{$user->ktp_image}";
                         if (file_exists($gambar_path)) {
                             unlink($gambar_path);
                         }
                     }
                     $file_k = $this->post('file_ktp_image');
-                    write_file('./uploads/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
+                    write_file('./image/ktp/' . $file_k, base64_decode($this->post('ktp_image')));
                     $updateData['ktp_image'] = $file_k;
                 }
 

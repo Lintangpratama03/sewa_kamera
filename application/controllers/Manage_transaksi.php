@@ -167,6 +167,7 @@ class Manage_transaksi extends CI_Controller
 
         $data = array(
             'is_deleted' => '1',
+            'status' => 'tolak',
         );
         $where = array('id' => $id);
 

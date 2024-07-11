@@ -700,7 +700,6 @@ class Manage_all extends RestController
         $this->form_validation->set_rules('phone_number', 'Phone Number', 'required');
         $this->form_validation->set_rules('tempat_lahir', 'Tempat Lahir', 'required');
         $this->form_validation->set_rules('tanggal_lahir', 'Tanggal Lahir', 'required');
-        $this->form_validation->set_rules('alamat', 'Alamat', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required');
         $this->form_validation->set_rules('file_image', 'File Image', 'required');
         $this->form_validation->set_rules('file_ktp_image', 'File KTP Image', 'required');
@@ -740,7 +739,7 @@ class Manage_all extends RestController
                         'ktp' => $this->post('ktp'),
                         'phone_number' => $this->post('phone_number'),
                         'tempat_lahir' => $this->post('tempat_lahir'),
-                        'address' => $this->post('alamat'),
+                        'address' => $this->post('address'),
                         'password' => $this->post('password'),
                         'image' => $file_p,
                         'ktp_image' => $file_k,
@@ -1313,8 +1312,27 @@ class Manage_all extends RestController
 
     public function update_password_post()
     {
-        // Implement update password logic here
+        $id = (int)$this->input->post('id');
+        $password = $this->input->post('password');
+
+        try {
+            $this->db->where('id', $id)
+                ->update('st_user', ['password' => $password]);
+
+            $response = [
+                'status' => 1,
+                'message' => 'Berhasil melakukan update password!'
+            ];
+        } catch (Exception $e) {
+            $response = [
+                'status' => 0,
+                'message' => 'Gagal melakukan update password!'
+            ];
+        }
+
+        $this->response($response, RestController::HTTP_OK);
     }
+
     public function get_tolak_transaksi_get($id)
     {
         $data = $this->db->select('t.id, t.status, t.total_harga, t.id_user')
@@ -1322,6 +1340,7 @@ class Manage_all extends RestController
             ->join('st_user as s', 's.id = t.id_mitra', 'left')
             ->where('t.id_user', $id)
             ->where('t.is_deleted', '1')
+            ->where('t.status', 'tolak')
             ->get()
             ->result();
 

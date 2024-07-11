@@ -112,7 +112,7 @@
                             <div class="row">
                                 <div class="col-lg-6 offset-2">
                                     <small class="text-danger pl-1" id="error-image"></small>
-                                    <div id="imagePreview"></div>
+                                    <div id="imagePreview3"></div>
                                 </div>
                             </div>
                         </div>

@@ -677,7 +677,7 @@ class Manage_all extends RestController
     public function get_update_status_expired_post()
     {
         // Validate the ID transaksi
-        $id = (int) $this->post('id_transaksi');
+        $id = $this->post('id_transaksi');
         if (!$id) {
             return $this->response([
                 "success" => false,

@@ -182,7 +182,7 @@ class Manage_product extends CI_Controller
                     'harga' => $harga,
                     'deskripsi' => $deskripsi,
                     'id_category' => $kategori,
-                    'id_category' => $kategori,
+                    'is_aktif' => 1,
                     'created_by' => $data['user']['id'],
                 );
 

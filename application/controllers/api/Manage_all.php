@@ -852,7 +852,7 @@ class Manage_all extends RestController
         $transactionsDetails = [];
 
         foreach ($data as $transaction) {
-            $detail = $this->db->select('t.id, su.name as nama_mitra, t.status, p.image, p.nama_produk, dt.id_transaksi, dt.jumlah, p.harga, dt.sub_total as sub_harga, t.total_harga as total_all_produk')
+            $detail = $this->db->select('t.transaction_id as order_id, t.id, su.name as nama_mitra, t.status, p.image, p.nama_produk, dt.id_transaksi, dt.jumlah, p.harga, dt.sub_total as sub_harga, t.total_harga as total_all_produk')
                 ->from('detail_transaksi as dt')
                 ->join('product as p', 'p.id = dt.id_produk', 'left')
                 ->join('transaksi as t', 't.id = dt.id_transaksi', 'left')

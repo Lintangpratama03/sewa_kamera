@@ -78,20 +78,20 @@ function get_data() {
 					{ data: "type" },
 					{ data: "stok" },
 					{ data: "harga" },
-					{
-                        data: "is_aktif",
-                        className: "text-center",
-                        render: function (data, type, row) {
-                            if (data == "0") {
-                                return '<button type="button" class="btn btn-block bg-gradient-warning btn-xs">Proses Verifikasi</button>';
-                            } else if (data == "1") {
-                                return '<button type="button" class="btn btn-block bg-gradient-success btn-xs">Terverifikasi</button>';
-                            } 
-							else if (data == "2") {
-                                return '<button type="button" class="btn btn-block bg-gradient-danger btn-xs">Ditolak Verifikasi</button>';
-                            } 
-                        },
-                    },
+					// {
+                    //     data: "is_aktif",
+                    //     className: "text-center",
+                    //     render: function (data, type, row) {
+                    //         if (data == "0") {
+                    //             return '<button type="button" class="btn btn-block bg-gradient-warning btn-xs">Proses Verifikasi</button>';
+                    //         } else if (data == "1") {
+                    //             return '<button type="button" class="btn btn-block bg-gradient-success btn-xs">Terverifikasi</button>';
+                    //         } 
+					// 		else if (data == "2") {
+                    //             return '<button type="button" class="btn btn-block bg-gradient-danger btn-xs">Ditolak Verifikasi</button>';
+                    //         } 
+                    //     },
+                    // },
 					{
 						data: "image",
 						className: "text-center",

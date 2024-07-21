@@ -682,7 +682,7 @@ class Manage_all extends RestController
             "status" => $this->post('status'),
             "status_bayar" => $this->post('status_bayar')
         ];
-        $this->response('hello');
+        $this->response($data);
         $this->db->where('id', $id);
         $this->db->update('transaksi', $data);
 

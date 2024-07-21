@@ -678,6 +678,7 @@ class Manage_all extends RestController
     {
         // Validate the ID transaksi
         $id = $this->post('id_transaksi');
+        $this->response($id);
         if (!$id) {
             return $this->response([
                 "success" => false,

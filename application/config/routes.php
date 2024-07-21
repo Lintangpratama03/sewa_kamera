@@ -64,6 +64,7 @@ $route['manage-kategori'] = 'Manage_category';
 $route['verifikasi-produk'] = 'Verifikasi_product';
 $route['manage-mitra-daftar'] = 'Manage_mitra_admin';
 $route['manage-mitra-aktif'] = 'Manage_mitra_aktif_admin';
+$route['manage-mitra-hapus'] = 'Manage_mitra_hapus_admin';
 $route['admin'] = 'Admin';
 $route['logout'] = 'Admin/logout';
 $route['data-sewa'] = 'data-admin/Data_sewa';

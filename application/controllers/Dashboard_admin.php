@@ -100,4 +100,46 @@ class Dashboard_admin extends CI_Controller
 		$result = $this->data->get($query)->result();
 		echo json_encode($result);
 	}
+	public function get_chart_data()
+	{
+		// Query untuk mendapatkan 5 mitra terpopuler
+		$mitra_query = [
+			'select' => 'st_user.name, COUNT(transaksi.id) as jumlah_transaksi',
+			'from' => 'st_user',
+			'join' => [
+				'transaksi, transaksi.id_mitra = st_user.id'
+			],
+			'where' => [
+				'st_user.id_credential' => '2',
+				'st_user.is_deleted' => '0'
+			],
+			'group_by' => 'st_user.id',
+			'order_by' => 'jumlah_transaksi DESC',
+			'limit' => 5
+		];
+		$mitra_data = $this->data->get($mitra_query)->result();
+
+		// Query untuk mendapatkan 5 produk terpopuler
+		$produk_query = [
+			'select' => 'product.nama_produk, COUNT(detail_transaksi.id) as jumlah_peminjaman',
+			'from' => 'product',
+			'join' => [
+				'detail_transaksi, detail_transaksi.id_produk = product.id'
+			],
+			'where' => [
+				'product.is_deleted' => '0'
+			],
+			'group_by' => 'product.id',
+			'order_by' => 'jumlah_peminjaman DESC',
+			'limit' => 5
+		];
+		$produk_data = $this->data->get($produk_query)->result();
+
+		$data = [
+			'mitra' => $mitra_data,
+			'produk' => $produk_data
+		];
+
+		echo json_encode($data);
+	}
 }

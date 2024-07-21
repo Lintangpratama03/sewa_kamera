@@ -1,3 +1,4 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="content-wrapper">
     <section class="content-header">
         <div class="container-fluid">
@@ -80,6 +81,15 @@
                         </div>
                         <a href="<?= base_url('manage-mitra-aktif') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                     </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="mitraChart"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="produkChart"></canvas>
                 </div>
             </div>
         </div>

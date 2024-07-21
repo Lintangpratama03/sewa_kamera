@@ -676,21 +676,50 @@ class Manage_all extends RestController
 
     public function get_update_status_expired_post()
     {
-        // Memperbarui status transaksi yang kedaluwarsa berdasarkan ID transaksi
+        // Validate the ID transaksi
         $id = (int) $this->post('id_transaksi');
-        $data = [
-            "status" => $this->post('status'),
-            "status_bayar" => $this->post('status_bayar')
-        ];
-        // $this->response($id);
-        $this->db->where('id', $id);
-        $this->db->update('transaksi', $data);
+        if (!$id) {
+            return $this->response([
+                "success" => false,
+                "message" => "ID transaksi tidak valid"
+            ], RestController::HTTP_BAD_REQUEST);
+        }
 
-        $this->response([
-            "success" => true,
-            "message" => "Data berhasil diupdate"
-        ], RestController::HTTP_OK);
+        // Validate and sanitize the input data
+        $status = $this->post('status');
+        $status_bayar = $this->post('status_bayar');
+
+        if (empty($status) || empty($status_bayar)) {
+            return $this->response([
+                "success" => false,
+                "message" => "Status dan status bayar harus diisi"
+            ], RestController::HTTP_BAD_REQUEST);
+        }
+
+        // Prepare the data array
+        $data = [
+            "status" => $status,
+            "status_bayar" => $status_bayar
+        ];
+
+        // Update the transaction status
+        $this->db->where('id', $id);
+        $update = $this->db->update('transaksi', $data);
+
+        // Check if the update was successful
+        if ($update) {
+            return $this->response([
+                "success" => true,
+                "message" => "Data berhasil diupdate"
+            ], RestController::HTTP_OK);
+        } else {
+            return $this->response([
+                "success" => false,
+                "message" => "Gagal mengupdate data"
+            ], RestController::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
+
     public function register_post()
     {
         $this->form_validation->set_rules('name', 'Name', 'required');
